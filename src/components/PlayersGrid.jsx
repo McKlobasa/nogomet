@@ -19,9 +19,9 @@ const PlayerRow = styled.button`
   font-size: 15px;
   padding: 2px;
   border: none;
-  background: ${ props => props.isChosen ? 'pink' : 'white' };
+  background: ${ props => props.isChosen ? 'lightgreen' : 'white' };
   position:relative;
-  border-top: 1px solid #ff7e94;
+  border-top: 1px solid lightgreen;
 
   :focus {
     outline: none;
@@ -32,7 +32,7 @@ const UpdateButton = styled.button`
   width: 100%;
   height: fit-content;
   border: none;
-  background: #ff7e94;
+  background: #003d17;
   color: white;
 
   :focus {

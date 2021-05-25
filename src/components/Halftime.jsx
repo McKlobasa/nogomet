@@ -31,6 +31,7 @@ const getString = (time) => {
     case 3: return 'EXTRA 1'
     case 4: return 'EXTRA 2'
     case 5: return 'FULL TIME'
+    case 6: return 'END OF 2nd HALF'
 
   }
 }

@@ -34,9 +34,15 @@ const GraphicsButtons = props => {
   }
   return (
     <Container>
+      <Button onClick={() => fetch('http://localhost:4545/GFX_countdown')}>COUNTDOWN</Button>
       <Button onClick={() => fetch('http://localhost:4545/GFX_game_id')}>GAME ID</Button>
       <Button onClick={() => fetch('http://localhost:4545/GFX_commentator')}>KOMENTATOR</Button>
       <Button onClick={() => fetch('http://localhost:4545/GFX_officials')}>OFFICIALS</Button>
+      <Button onClick={() => fetch('http://localhost:4545/GFX_schedule')}>SCHEDULE</Button>
+      <Button onClick={() => fetch('http://localhost:4545/GFX_nextMatch')}>NEXT MATCH</Button>
+      <Button onClick={() => fetch('http://localhost:4545/GFX_multi_flash')}>MULTI FLASH</Button>
+      <Button onClick={() => fetch('http://localhost:4545/resetFouls')}>RESET FOULS</Button>
+
       <Button onClick={playStatistics}>statistics</Button>
       <Button onClick={() => fetch('http://localhost:4545/GFX_player')}>player</Button>
       <Button onClick={() => fetch('http://localhost:4545/GFX_player_info')}>player INFO</Button>

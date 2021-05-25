@@ -16,9 +16,9 @@ const Header = props => {
   return (
     <Container>
       <Clock />
-      <BallPossesion />
+      <div />
       <Score />
-      <Shootout />
+      <div></div>
       <Button onClick={() => fetch('http://localhost:4545/GFX_out')}/>
     </Container>
   )

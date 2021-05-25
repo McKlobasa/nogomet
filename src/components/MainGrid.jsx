@@ -22,8 +22,8 @@ const Grid = styled.div`
   background: linear-gradient(
     200.96deg,
     #fedc2a -29.09%,
-    #dd5789 51.77%,
-    #7a2c9e 129.35%
+    #086d19 51.77%,
+    #001531 129.35%
   );
   font-family: sans-serif;
   color: white;

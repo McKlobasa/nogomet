@@ -6,13 +6,17 @@ import { StatisticsContext } from '../context/StatisticsContext'
 const Input = styled.input`
   height: 16px;
   width: 100%;
-  padding: 0px;
+  border: 1px solid lightgreen;
+  margin: 0px;
 `
 
 const Container = styled.div`
   display: grid;
   grid-template-columns: 3fr 2fr 1fr 3fr 2fr;
-  grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  border-radius: 15px;
+  overflow: hidden;
+  margin-top: 20px;
 `
 const Button = styled.button`
   height: 20px;
@@ -20,6 +24,14 @@ const Button = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
+  background: lightgreen;
+  border:none;
+  &:hover {
+    background: green;
+  }
+  &:active {
+    color: white;
+  }
 `
 
 const postData = (endpoint, data) => {
@@ -76,10 +88,21 @@ const Shooters = props => {
     else timeString = 'HT_FT'
 
     let period = ''
-    if(time.time < 2) {
-      period = 'HALF TIME'
-    } else {
-      period ='FULL TIME'
+    switch (Number(time.time)) {
+      case 0: period='HALF-TIME'
+        break
+      case 1: period='HALF-TIME'
+        break
+      case 2: period='HALF-TIME'
+        break
+      case 3: period='HALF-TIME'
+        break
+      case 4: period='HALF-TIME'
+        break
+      case 5: period='FULL-TIME'
+        break
+      case 6: period='END OF 2nd HALF'
+        break
     }
 
     const scene = `MATCHSCORE_${size}_${timeString}`
@@ -89,7 +112,7 @@ const Shooters = props => {
       size,
       scene,
       period,
-      score: `${stats.goals[0]}-${stats.goals[0]}`,
+      score: `${stats.goals[0]}-${stats.goals[1]}`,
       shooters: [
         shooter01,
         shooter02,
@@ -161,7 +184,6 @@ const Shooters = props => {
       <Button onClick={() =>handleClick(7)} >7</Button>
       <Input onChange={evt => setShooter14(evt.target.value)} value={shooter14} />
       <Input onChange={evt => setTime14(evt.target.value)} value={time14} />
-      <Button onClick={() =>handleClick(1)} >SHOOTERS</Button>
     </Container>
   )
 }

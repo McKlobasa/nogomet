@@ -21,7 +21,7 @@ const Button = styled.button`
   grid-column: 1/3;
   grid-row: 2/3;
   border: none;
-  background: pink;
+  background: #00f05c;
 `
 
 const BallPossesion = props => {

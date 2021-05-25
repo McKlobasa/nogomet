@@ -5,7 +5,7 @@ const halftimeInit = {time: 0} // 0 = first half, 1 = halftime, 2 = second half,
 
 const reducer = (state, action) => {
   switch(action.type) {
-    case 'next': return {time: (state.time + 1 < 6 ? state.time + 1 : 5)}
+    case 'next': return {time: (state.time + 1 < 7 ? state.time + 1 : 6)}
     case 'prev': return {time: (state.time  > 0 ? state.time - 1 : 0)}
     default: console.log(action.type)
   }
