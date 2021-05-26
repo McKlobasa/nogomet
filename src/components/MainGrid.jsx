@@ -48,7 +48,6 @@ const MainGrid = (props) => {
   const [players, setPlayers] = useContext(PlayerContext)
 
   const handleGoal = () => {
-    console.log('GOOOOOAL')
     const eventObject = {
       type: isTeamA == 0 ? 'goalA' : 'goalB',
       payload: isTeamA == 0 ? isChosenA : isChosenB

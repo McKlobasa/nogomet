@@ -1,5 +1,5 @@
 import { UpdaterSignal } from 'electron-updater'
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { PlayerContext, PlayerContextProvider } from '../context/PlayerContext'
 
@@ -43,7 +43,7 @@ const UpdateButton = styled.button`
 
 const PlayersGrid = ( props ) => {
   const [players, dispatch] = useContext(PlayerContext)
-
+  useEffect(() => console.log(players), [players])
   const update = () => {
     if (props.isTeamA) return fetch('http://localhost:4545/lineupA')
     .then(res=> res.json())
@@ -64,8 +64,9 @@ const PlayersGrid = ( props ) => {
               props.setThisTeam()
             }}
             isChosen={props.isChosen == iter}
-          >{`${player?.st}  ${player?.priimek}`} <div style={{position: 'absolute', right: 5, top: 3}}>{` goli: ${player?.goliskupaj} + ${player?.goliigra} in ${player?.tekme} matches`}</div> </PlayerRow>
-        )
+          >{`${player?.st}  ${player?.priimek}`} 
+          <div style={{position: 'absolute', right: 5, top: 3}}>{`${player?.attempts} ${player?.shots} ${player?.goals}`}</div> 
+        </PlayerRow>)
       }
     </Container>
   )
