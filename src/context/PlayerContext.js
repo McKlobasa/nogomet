@@ -2,7 +2,7 @@ import React, {useReducer, createContext} from 'react'
 import Player from '../Player'
 
 const PlayerContext = createContext()
-const playersInit = Array(2).fill(Array(10).fill({st: 0, priimek: 'Priimković', attempts: 0, shots: 0, goals: 0 }))
+const playersInit = Array(2).fill(Array(10).fill({st: 0, name: 'Imenovan', priimek: 'Priimković', attempts: 0, shots: 0, goals: 0, fouls: 0}))
 const statIncrement = (team, numberLineup, key) => {
   const output = team.map((player, iter) => {
     if (iter != numberLineup) return player
@@ -23,6 +23,8 @@ const playerReducer = (state, action) => {
     case 'shotB':    return [ state[0], statIncrement(state[1], action.payload, "shots") ]
     case 'goalA':    return [ statIncrement(state[0], action.payload, "goals"), state[1] ]
     case 'goalB':    return [ state[0], statIncrement(state[1], action.payload, "goals") ]
+    case 'foulA':    return [ statIncrement(state[0], action.payload, "fouls"), state[1] ]
+    case 'foulB':    return [ state[0], statIncrement(state[1], action.payload, "fouls") ]
   }
 }
 

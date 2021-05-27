@@ -47,9 +47,9 @@ const MainGrid = (props) => {
   const [hackIter, setHackIter] = useState(false)
   const [players, setPlayers] = useContext(PlayerContext)
 
-  const handleGoal = () => {
+  const handleGoal = (key) => {
     const eventObject = {
-      type: isTeamA == 0 ? 'goalA' : 'goalB',
+      type: isTeamA == 0 ? key[0] : key[1],
       payload: isTeamA == 0 ? isChosenA : isChosenB
     }
     setPlayers(eventObject)
@@ -63,11 +63,13 @@ const MainGrid = (props) => {
     const player = players[isTeamA][ isTeamA ? isChosenB : isChosenA]
     const output = {
       number: player.st,
+      name: player.name,
       surname: player.priimek,
       isTeamA,
-      goalsBefore: player.goliskupaj,
-      goals: player.goliigra,
-      matches: player.tekme
+      goals: player.goals,
+      shots: player.shots,
+      attempts: player.attempts,
+      fouls: player.fouls
     }
     console.log(player)
     postData('currentPlayer', output)

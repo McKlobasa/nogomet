@@ -48,13 +48,15 @@ const Clock = props => {
     setGameTime(incrementTime(gameTime))
   }
 
-  useEffect(() => console.log(gameTime), [gameTime])
+  const ensureLeadingZero = number => `${Math.floor(number / 10)}${number % 10}`
+
+  useEffect(() => fetch(`http://localhost:4545/clock/${ensureLeadingZero(gameTime.min)}:${ensureLeadingZero(gameTime.sec)}`) , [gameTime])
 
   useInterval(() => {
     handleTick()
   }, 999)
 
-  
+
   return (
     <Container>
       <p>{`${gameTime.min} : ${gameTime.sec}`}</p>
@@ -63,9 +65,11 @@ const Clock = props => {
       }>{clockIsRunning ? 'stop' : 'start'}</button>
       <button onClick={() => setGameTime(incrementTime(gameTime)) }>+</button>
       <button onClick={() => setGameTime(decrementTime(gameTime)) }>-</button>
+      <button onClick={() => fetch('http://localhost:4545/GFX_clock_IN') }>IN</button>
+      <button onClick={() => fetch('http://localhost:4545/GFX_clock_OUT') }>OUT</button>
       <button onClick={() => {
-        setGameTime({min: 0, sec: 0}) 
-        setExtraTime({min: 0, sec: 0}) 
+        setGameTime({min: 0, sec: 0})
+        setExtraTime({min: 0, sec: 0})
       }}>reset</button>
     </Container>
   )

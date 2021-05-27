@@ -35,14 +35,19 @@ const StatisticsButtons = ( props ) => {
     setStats({type: 'goal', team: props.isTeamA})
     setStats({type: 'shot', team: props.isTeamA})
     setStats({type: 'attempt', team: props.isTeamA})
-    props.handleGoal()
+    props.handleGoal(['goalA', 'goalB'])
+    props.handleGoal(['shotA', 'shotB'])
+    props.handleGoal(['attemptA', 'attemptB'])
   }
   const handleShot = () => {
     setStats({type: 'shot', team: props.isTeamA})
     setStats({type: 'attempt', team: props.isTeamA})
+    props.handleGoal(['shotA', 'shotB'])
+    props.handleGoal(['attemptA', 'attemptB'])
   }
   const handleAttempt = () => {
     setStats({type: 'attempt', team: props.isTeamA})
+    props.handleGoal(['attemptA', 'attemptB'])
   }
   const handleCorner = () => {
     setStats({type: 'corner', team: props.isTeamA})
@@ -55,6 +60,7 @@ const StatisticsButtons = ( props ) => {
     } else {
       foulsInHalf = [stats.fouls[0][time.time < 2 ? 0 : 1], stats.fouls[1][time.time < 2 ? 0 : 1] + 1]
     }
+    props.handleGoal(['foulA', 'foulB'])
     console.log(foulsInHalf)
     fetch(`http://localhost:4545/foulsInHalf/${foulsInHalf[0]}/${foulsInHalf[1]}`)
 

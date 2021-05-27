@@ -1,5 +1,5 @@
 class Viz {
-  static project = 'CHL_FUTSAL'
+  static project = 'UEFA'
   static setScene         = (project, scene)  => `0 RENDERER SET_OBJECT SCENE*${project}/PLAYOUT/${scene}\0`
   static setTextBasic     = (container, text) => `0 RENDERER*TREE*$${container}*GEOM*TEXT SET ${text}\0`
   static setTextPlugin    = (container, text) => `0 RENDERER*TREE*$${container}*FUNCTION*TFxWrite*Text SET ${text}\0`

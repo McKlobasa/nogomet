@@ -135,59 +135,17 @@ class VizCommands {
   }
 
   static clock (time) {
-    const correction = [foulsIn[0] > 0 ? 1 : 0, foulsIn[1] > 0 ? 1 : 0]
-    let homeFouls = foulStackA_IN.slice(0, Number(foulsIn[0]) > 6 ? 6 : Number(foulsIn[0]) + correction[0]).reduce((a, b) => a + b, 0)
-    let awayFouls = foulStackB_IN.slice(0, Number(foulsIn[1]) > 6 ? 6 : Number(foulsIn[1]) + correction[1]).reduce((a, b) => a + b, 0)
-
-    let clockString
-    switch(Number(time)) {
-      case 0: clockString = '1st'
-        break
-      case 1: clockString = '1st'
-        break
-      case 2: clockString = '2nd'
-        break
-      case 3: clockString = 'ET1'
-        break
-      case 4: clockString = 'ET2'
-        break
-      case 5: clockString = 'END'
-        break
-      case 6: clockString = 'PEN'
-        break
-      default: clockString = ''
-    }
-
-    return Viz.setScene(Viz.project, 'CLOCK') + Viz.animationStart('CLOCK_IN') +
-      Viz.setTextBasic('TEAM_1', gameData[0].logoA) + Viz.setTextBasic('TEAM_2', gameData[0].logoB) +
-      Viz.setTextBasic('HALF', clockString) +
-      Viz.setTextBasic('SCORE', `${score[0]}-${score[1]}`) + homeFouls + awayFouls
+    return Viz.setScene(Viz.project, 'CLOCK') + Viz.animationStart('CLOCK_IN')
   }
   static clock_OUT () {
-    return [
-      Viz.setScene(Viz.project, 'CLOCK') + Viz.animationStart('CLOCK_OUT') +
-      foulStackA_OUT[Number(foulsIn[0]) < 6 ?  Number(foulsIn[0]) : 5] +
-      foulStackB_OUT[Number(foulsIn[1]) < 6 ?  Number(foulsIn[1]) : 5], ''
-    ]
+    return Viz.setScene(Viz.project, 'CLOCK') + Viz.animationStart('CLOCK_OUT')
   }
-  static updateTime () {
-    return Viz.setScene(Viz.project, 'CLOCK') +
-      Viz.setTextBasic('URA', clock[0]) +
-      Viz.setTextBasic('CLOCK_1_1', clock[1]) +
-      Viz.setTextBasic('CLOCK_1_2', clock[2]) +
-      Viz.setTextBasic('CLOCK_2_1', clock[4]) +
-      Viz.setTextBasic('CLOCK_2_2', clock[5])
+  static updateTime (timestring) {
+    return Viz.setTextBasic('CLOCK_TXT', timestring)
   }
-  static foulsClock (fouls) {
-    let homeFouls = ''
-    let awayFouls = ''
-    if (fouls[0] != foulsIn[0]) homeFouls = foulStackA_IN[fouls[0]]
-    if (fouls[1] != foulsIn[1]) awayFouls = foulStackB_IN[fouls[1]]
-
-    foulsIn = fouls
-    console.log(foulsIn)
-    return Viz.setScene(Viz.project, 'CLOCK') +
-      Viz.setTextBasic('SCORE', `${score[0]}-${score[1]}`) + homeFouls + awayFouls
+  static setScore (score) {
+    return Viz.setTextBasic('SCORE_1', `${score[0]}`) +
+      Viz.setTextBasic('SCORE_2', `${score[1]}`)
   }
   static izk1 () {
     return Viz.setScene(Viz.project, 'CLOCK') + Viz.animationStart('IZKLJUCITEV_1_L_IN')
@@ -242,18 +200,29 @@ class VizCommands {
     let awayFouls = foulStackB_IN.slice(0, Number(foulsIn[1]) > 6 ? 6 : Number(foulsIn[1]) + correction[1]).reduce((a, b) => a + b, 0)
     return Viz.setScene(Viz.project, 'CLOCK') + Viz.animationStart('PLAYER_ID_INFO_OUT') + homeFouls + awayFouls
   }
-  static yellow () {
-    return Viz.setScene(Viz.project, 'CLOCK') + Viz.animationStart('YELLOW_CARD_IN') +
-      Viz.setTextBasic('PLAYER_YELLOW', `${currentPlayer.number} ${currentPlayer.surname}`) +
-      foulStackA_OUT[Number(foulsIn[0]) < 6 ?  Number(foulsIn[0]) : 5] +
-      foulStackB_OUT[Number(foulsIn[1]) < 6 ?  Number(foulsIn[1]) : 5] +
-      Viz.setLogo('LOGO_1_YELLOW', currentPlayer.isTeamA  == 0? gameData[0].logoA : gameData[0].logoB)
+  static yellow (player) {
+    console.log(player)
+    return Viz.animationStart('YELLOW_CARD_IN') +
+      Viz.setTextBasic('PLAYER_YELLOW', `${player.number} ${player.surname} (${player.isTeamA == 0 ? 'MLT' : 'NIR'})`)
   }
   static yellow_OUT () {
-    const correction = [foulsIn[0] > 0 ? 1 : 0, foulsIn[1] > 0 ? 1 : 0]
-    let homeFouls = foulStackA_IN.slice(0, Number(foulsIn[0]) > 6 ? 6 : Number(foulsIn[0]) + correction[0]).reduce((a, b) => a + b, 0)
-    let awayFouls = foulStackB_IN.slice(0, Number(foulsIn[1]) > 6 ? 6 : Number(foulsIn[1]) + correction[1]).reduce((a, b) => a + b, 0)
-    return Viz.setScene(Viz.project, 'CLOCK') + Viz.animationStart('YELLOW_CARD_OUT') + homeFouls + awayFouls
+    return Viz.animationStart('YELLOW_CARD_OUT')
+  }
+  static doubleYellow (player) {
+    console.log(player)
+    return Viz.animationStart('DOUBLE_YELLOW_IN') +
+      Viz.setTextBasic('PLAYER_DOUBLE_YELLOW', `${player.number} ${player.surname} (${player.isTeamA == 0 ? 'MLT' : 'NIR'})`)
+  }
+  static doubleYellow_OUT () {
+    return Viz.animationStart('DOUBLE_YELLOW_OUT')
+  }
+  static red (player) {
+    console.log(player)
+    return Viz.animationStart('RED_CARD_IN') +
+      Viz.setTextBasic('PLAYER_RED', `${player.number} ${player.surname} (${player.isTeamA == 0 ? 'MLT' : 'NIR'})`)
+  }
+  static red_OUT () {
+    return Viz.animationStart('RED_CARD_OUT')
   }
   static ballPossesion (possesion1, possesion2) {
     return Viz.setScene(Viz.project, 'CLOCK') + Viz.animationStart('BALL_POSSESION_IN') +
@@ -270,34 +239,6 @@ class VizCommands {
     let homeFouls = foulStackA_IN.slice(0, Number(foulsIn[0]) > 6 ? 6 : Number(foulsIn[0]) + correction[0]).reduce((a, b) => a + b, 0)
     let awayFouls = foulStackB_IN.slice(0, Number(foulsIn[1]) > 6 ? 6 : Number(foulsIn[1]) + correction[1]).reduce((a, b) => a + b, 0)
     return Viz.setScene(Viz.project, 'CLOCK') + Viz.animationStart('BALL_POSSESION_OUT') + homeFouls + awayFouls
-  }
-  static doubleYellow () {
-    return Viz.setScene(Viz.project, 'CLOCK') + Viz.animationStart('DOUBLE_YELLOW_IN') +
-      Viz.setTextBasic('PLAYER_DOUBLE_YELLOW', `${currentPlayer.number} ${currentPlayer.surname}`) +
-      foulStackA_OUT[Number(foulsIn[0]) < 6 ?  Number(foulsIn[0]) : 5] +
-      foulStackB_OUT[Number(foulsIn[1]) < 6 ?  Number(foulsIn[1]) : 5] +
-      Viz.setLogo('LOGO_1_DOUBLE_YELLOW', currentPlayer.isTeamA == 0 ? gameData[0].logoA : gameData[0].logoB)
-  }
-  static doubleYellow_OUT () {
-
-    const correction = [foulsIn[0] > 0 ? 1 : 0, foulsIn[1] > 0 ? 1 : 0]
-    let homeFouls = foulStackA_IN.slice(0, Number(foulsIn[0]) > 6 ? 6 : Number(foulsIn[0]) + correction[0]).reduce((a, b) => a + b, 0)
-    let awayFouls = foulStackB_IN.slice(0, Number(foulsIn[1]) > 6 ? 6 : Number(foulsIn[1]) + correction[1]).reduce((a, b) => a + b, 0)
-    return Viz.setScene(Viz.project, 'CLOCK') + Viz.animationStart('DOUBLE_YELLOW_OUT') + homeFouls + awayFouls
-  }
-  static red () {
-    return Viz.setScene(Viz.project, 'CLOCK') + Viz.animationStart('RED_CARD_IN') +
-      Viz.setTextBasic('PLAYER_RED', `${currentPlayer.number} ${currentPlayer.surname}`) +
-      foulStackA_OUT[Number(foulsIn[0]) < 6 ?  Number(foulsIn[0]) : 5] +
-      foulStackB_OUT[Number(foulsIn[1]) < 6 ?  Number(foulsIn[1]) : 5] +
-      Viz.setLogo('LOGO_1_RED', currentPlayer.isTeamA == 0 ? gameData[0].logoA : gameData[0].logoB)
-  }
-  static red_OUT () {
-
-    const correction = [foulsIn[0] > 0 ? 1 : 0, foulsIn[1] > 0 ? 1 : 0]
-    let homeFouls = foulStackA_IN.slice(0, Number(foulsIn[0]) > 6 ? 6 : Number(foulsIn[0]) + correction[0]).reduce((a, b) => a + b, 0)
-    let awayFouls = foulStackB_IN.slice(0, Number(foulsIn[1]) > 6 ? 6 : Number(foulsIn[1]) + correction[1]).reduce((a, b) => a + b, 0)
-    return Viz.setScene(Viz.project, 'CLOCK') + Viz.animationStart('RED_CARD_OUT') + homeFouls + awayFouls
   }
   static statistics (data) {
     return Viz.setScene(Viz.project, 'STATISTIC') +

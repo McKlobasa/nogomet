@@ -4,7 +4,10 @@ import PlayersGrid from './PlayersGrid'
 import TeamSpecific from './TeamSpecific'
 
 const Container = styled.div`
+  box-sizing: border-box;
   grid-area: ${ props => props.isTeamA ? 'left' : 'right' };
+  padding: 13px;
+
 `
 
 const SidePanel = (props) => {

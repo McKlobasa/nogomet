@@ -12,7 +12,7 @@ const port = 4545
 app.use(bodyParser.json())
 
 const VIZ_port = 6100
-const VIZ_ip = 'localhost'
+const VIZ_ip = 'viz01'
 const client = new net.Socket()
 client.connect(VIZ_port, VIZ_ip, () => console.log(`connected to ${VIZ_ip}:${VIZ_port}`))
 
@@ -40,7 +40,6 @@ let gameData = [{
   logoA: '',
   logoB: ''
 }]
-let clockPath = 'C:\\Users\\kllam\\Desktop\\Clock.txt'
 let clock = []
 let clockIsIn = false
 let exitCommand = ''
@@ -48,11 +47,13 @@ let score = [0,0]
 let izkIn = [0,0]
 let currentPlayer = {
   number: '10',
-  surname: 'surko',
+  surname: 'priimek',
+  name: 'ime',
   isTeamA: 0,
-  goalsBefore: 0,
   goals: 0,
-  matches: 0
+  shots: 0,
+  attempts: 0,
+  fouls: 0
 }
 let matchscoreIsIn = false
 let countdownIsIn = false
@@ -71,6 +72,7 @@ const playGraphics = (graphics, delays) => {
 
 const playSingleGraphic = (gfx) => {
   client.write(gfx)
+  console.log(gfx)
 }
 
 
@@ -81,7 +83,7 @@ app.get('/', (req, res) => {
 app.get('/score/:a/:b', (req, res) => {
   res.send('score')
   score = [req.params.a, req.params.b]
-  playSingleGraphic(Commands.updateScoreClock())
+  playSingleGraphic(Commands.setScore(score))
 })
 app.get('/GFX_out', (req, res) => {
   res.send('GFX_lineup')
@@ -125,51 +127,17 @@ app.get('/GFX_lineupB', (req, res) => {
   playSingleGraphic(Commands.lineupB())
   exitCommand = Commands.lineup_OUT()
 })
-app.get('/GFX_clock_IN/:time', (req, res) => { //time => 0 ali 1
+app.get('/GFX_clock_IN', (req, res) => {
   res.send('clock_IN')
-  playSingleGraphic(Commands.clock(req.params.time))
+  playSingleGraphic(Commands.clock())
+  playSingleGraphic(Commands.setScore(score))
+  playSingleGraphic(Commands.updateTime(clock))
   clockIsIn = true
 })
 app.get('/GFX_clock_OUT', (req, res) => {
   res.send('clock_OUT')
-  playGraphics(Commands.clock_OUT(), [10, 500])
+  playSingleGraphic(Commands.clock_OUT())
   clockIsIn = false
-})
-app.get('/GFX_izk1_IN', (req, res) => {
-  res.send('clock_IN')
-  playSingleGraphic(Commands.izk1())
-})
-app.get('/GFX_izk1_OUT', (req, res) => {
-  res.send('clock_IN')
-  playSingleGraphic(Commands.izk1_OUT())
-})
-app.get('/GFX_izk2_IN', (req, res) => {
-  res.send('clock_IN')
-  playSingleGraphic(Commands.izk2())
-})
-app.get('/GFX_izk2_OUT', (req, res) => {
-  res.send('clock_IN')
-  playSingleGraphic(Commands.izk2_OUT())
-})
-app.get('/GFX_izk3_IN', (req, res) => {
-  res.send('clock_IN')
-  playSingleGraphic(Commands.izk3())
-})
-app.get('/GFX_izk3_OUT', (req, res) => {
-  res.send('clock_IN')
-  playSingleGraphic(Commands.izk3_OUT())
-})
-app.get('/GFX_izk4_IN', (req, res) => {
-  res.send('clock_IN')
-  playSingleGraphic(Commands.izk4())
-})
-app.get('/GFX_izk4_OUT', (req, res) => {
-  res.send('clock_IN')
-  playSingleGraphic(Commands.izk4_OUT())
-})
-app.get('/GFX_izk4_OUT', (req, res) => {
-  res.send('clock_IN')
-  playSingleGraphic(Commands.izk4_OUT())
 })
 app.get('/GFX_coach/:team', (req, res) => {
   res.send('coach_IN')
@@ -207,17 +175,17 @@ app.get('/GFX_ball_possesion/:a/:b', (req, res) => {
 })
 app.get('/GFX_yellow', (req, res) => {
   res.send('clock_IN')
-  playSingleGraphic(Commands.yellow())
+  playSingleGraphic(Commands.yellow(currentPlayer))
   exitCommand = Commands.yellow_OUT()
 })
 app.get('/GFX_double_yellow', (req, res) => {
   res.send('clock_IN')
-  playSingleGraphic(Commands.doubleYellow())
+  playSingleGraphic(Commands.doubleYellow(currentPlayer))
   exitCommand = Commands.doubleYellow_OUT()
 })
 app.get('/GFX_red', (req, res) => {
   res.send('clock_IN')
-  playSingleGraphic(Commands.red())
+  playSingleGraphic(Commands.red(currentPlayer))
   exitCommand = Commands.red_OUT()
 })
 app.post('/statistics', (req, res) => {
@@ -312,8 +280,10 @@ app.post('/clock', (req, res) => {
   res.send('lineup a')
   clockPath = req.body.path
 })
-app.get('/clock', (req, res) => {
-  res.json({clock})
+app.get('/clock/:timestring', (req, res) => {
+  res.send('got timestring')
+  clock = req.params.timestring
+  playSingleGraphic(Commands.updateTime(clock))
 })
 
 app.listen(port, () => {

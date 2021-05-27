@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import styled from 'styled-components'
 import {StatisticsContext} from '../context/StatisticsContext'
 
@@ -27,6 +27,9 @@ const NumberInput = styled.div`
 
 const Score = props => {
   const [stats, setStats] = useContext(StatisticsContext)
+  useEffect(() => {
+    fetch(`http://localhost:4545/score/${stats.goals[0]}/${stats.goals[1]}`)
+  }, [stats])
   return (
     <Container>
       <NumberInput>{stats.goals[0]}</NumberInput>
