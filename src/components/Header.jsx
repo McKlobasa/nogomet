@@ -2,9 +2,11 @@ import React from 'react'
 import styled from 'styled-components'
 import BallPossesion from './BallPossesion'
 import Clock from './Clock'
+import CountDown from './CountDown'
 import Button from './mini_components/Button'
 import Score from './Score'
-import Shootout from './Shootout'
+import Sub from './Sub'
+
 
 const Container = styled.div`
   grid-area: header;
@@ -16,9 +18,9 @@ const Header = props => {
   return (
     <Container>
       <Clock />
-      <div />
+      <CountDown />
       <Score />
-      <div></div>
+      <div />
       <Button onClick={() => fetch('http://localhost:4545/GFX_out')}/>
     </Container>
   )

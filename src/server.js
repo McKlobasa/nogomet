@@ -58,8 +58,28 @@ let currentPlayer = {
 let matchscoreIsIn = false
 let countdownIsIn = false
 let foulsIn = [0,0]
+let tactical = [
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+]
 
-
+let stats = {
+  attempts:  [1, 0],
+  ballPoss:  [0, 0],
+  completed: [0, 0],
+  corners:   [0, 0],
+  offsides:  [0, 0],
+  fouls:     [[0,0], [0,0]],
+  goals:     [0, 0],
+  passed:    [0, 0],
+  reds:      [[0,0], [0,0]],
+  shots:     [1, 0],
+  yellows:   [[0,0], [0,0]]
+}
+let players = {
+  home: [],
+  away: []
+}
 
 const playGraphics = (graphics, delays) => {
   graphics.map((gfx, i) => {
@@ -84,6 +104,21 @@ app.get('/score/:a/:b', (req, res) => {
   res.send('score')
   score = [req.params.a, req.params.b]
   playSingleGraphic(Commands.setScore(score))
+})
+/*
+    case 0: return '1'
+    case 1: return 'HALF TIME'
+    case 2: return '2'
+    case 3: return 'EXTRA 1'
+    case 4: return 'EXTRA 2'
+    case 5: return 'FULL TIME'
+    case 6: return 'END OF 2nd HALF'
+*/
+let halftime = 0
+app.get('/halftime/:time', (req, res) => {
+  res.send('halftime')
+  halftime = Number(req.params.time)
+  console.log(halftime)
 })
 app.get('/GFX_out', (req, res) => {
   res.send('GFX_lineup')
@@ -117,19 +152,28 @@ app.get('/GFX_timeout/:team', (req, res) => {
   playSingleGraphic(Commands.timeout(req.params.team == 0 ? gameData[0].logoA : gameData[0].logoB))
   exitCommand = Commands.timeout_OUT()
 })
-app.get('/GFX_lineupA', (req, res) => {
+app.get('/GFX_lineupA/:variation', (req, res) => {
   res.send('GFX_lineup')
-  playSingleGraphic(Commands.lineupA())
-  exitCommand = Commands.lineup_OUT()
+  let playersInGame = []
+  tactical[0].forEach( player => {
+    if (player.tactical > 0) playersInGame.push(player)
+  })
+  playSingleGraphic(Commands.lineup(playersInGame, "HOME", req.params.variation))
+  exitCommand = Commands.lineup_OUT("HOME")
 })
-app.get('/GFX_lineupB', (req, res) => {
+app.get('/GFX_lineupB/:variation', (req, res) => {
   res.send('GFX_lineup')
-  playSingleGraphic(Commands.lineupB())
-  exitCommand = Commands.lineup_OUT()
+  let playersInGame = []
+  tactical[1].forEach( player => {
+    if (player.tactical > 0) playersInGame.push(player)
+  })
+  playSingleGraphic(Commands.lineup(playersInGame, "AWAY", req.params.variation))
+  exitCommand = Commands.lineup_OUT("AWAY")
 })
 app.get('/GFX_clock_IN', (req, res) => {
   res.send('clock_IN')
   playSingleGraphic(Commands.clock())
+  playSingleGraphic(Commands.redsIn(stats.reds))
   playSingleGraphic(Commands.setScore(score))
   playSingleGraphic(Commands.updateTime(clock))
   clockIsIn = true
@@ -137,6 +181,7 @@ app.get('/GFX_clock_IN', (req, res) => {
 app.get('/GFX_clock_OUT', (req, res) => {
   res.send('clock_OUT')
   playSingleGraphic(Commands.clock_OUT())
+  playSingleGraphic(Commands.redsOut(stats.reds))
   clockIsIn = false
 })
 app.get('/GFX_coach/:team', (req, res) => {
@@ -158,13 +203,33 @@ app.post('/podpis', (req, res) => {
   const number = req.body.number
 })
 
+app.post('/subClockInStart', (req, res) => {
+  res.send('podpis')
+  playSingleGraphic(Commands.SubClockInStart(req.body.player, req.body.country))
+})
+app.get('/subClockInStop', (req, res) => {
+  res.send('podpis')
+  playSingleGraphic(Commands.SubClockInStop())
+})
+app.post('/subClockOutStart', (req, res) => {
+  res.send('podpis')
+  playSingleGraphic(Commands.SubClockOutStart(req.body.player, req.body.country))
+})
+app.get('/subClockOutStop', (req, res) => {
+  res.send('podpis')
+  playSingleGraphic(Commands.SubClockOutStop())
+})
+
+
+
 app.get('/GFX_player', (req, res) => {
   res.send('clock_IN')
   playSingleGraphic(Commands.playerSig())
   exitCommand = Commands.playerSig_OUT()
 })
-app.get('/GFX_player_info', (req, res) => {
+app.get('/GFX_player_info/variation', (req, res) => {
   res.send('clock_IN')
+
   playSingleGraphic(Commands.playerInfo())
   exitCommand = Commands.playerInfo_OUT()
 })
@@ -190,8 +255,7 @@ app.get('/GFX_red', (req, res) => {
 })
 app.post('/statistics', (req, res) => {
   res.send('statistics')
-  const data = req.body
-  playSingleGraphic(Commands.statistics(data))
+  playSingleGraphic(Commands.statistics(stats, halftime < 2 ? "HALF-TIME" : "FUL TIME"))
   exitCommand = Commands.statistics_OUT()
 })
 app.post('/GFX_matchScore', (req, res) => {
@@ -228,7 +292,12 @@ app.post('/GFX_small_shootout_update', (req, res) => {
   playSingleGraphic(Commands.updateShootoutSmall(data))
   exitCommand = Commands.shootout_small_OUT()
 })
-
+app.post('/GFX_matchScore', (req, res) => {
+  res.send('GFX_matchScore')
+  const data = req.body
+  playSingleGraphic(Commands.matchScore(data))
+  exitCommand = Commands.matchScore_OUT(data)
+})
 app.get('/GFX_schedule', (req, res) => {
   res.send('schedule')
   playSingleGraphic(Commands.schedule())
@@ -246,6 +315,21 @@ app.get('/GFX_multi_flash', (req, res) => {
 })
 
 
+app.post('/stats', (req, res) => {
+  res.send('you sent stats')
+  console.log(req.body)
+  stats = req.body
+})
+app.post('/tacticalA', (req, res) => {
+  res.send('got tactical A')
+  tactical = [ req.body, tactical[1] ]
+  console.log(tactical)
+})
+app.post('/tacticalB', (req, res) => {
+  res.send('got tactical B')
+  tactical = [ tactical[0], req.body ]
+  console.log(tactical)
+})
 app.post('/currentPlayer', (req, res) => {
   res.send('current player')
   console.log(req.body)

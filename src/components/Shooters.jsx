@@ -105,7 +105,7 @@ const Shooters = props => {
         break
     }
 
-    const scene = `MATCHSCORE_${size}_${timeString}`
+    const scene = `MATCH_SCORE_${size}`
 
 
     postData('GFX_matchScore', {
@@ -151,37 +151,37 @@ const Shooters = props => {
     <Container>
       <Input onChange={evt => setShooter01(evt.target.value)} value={shooter01} />
       <Input onChange={evt => setTime01(evt.target.value)} value={time01} />
-      <Button onClick={() =>handleClick(1)} >1</Button>
+      <Button onClick={() =>handleClick("01")} >1</Button>
       <Input onChange={evt => setShooter02(evt.target.value)} value={shooter02} />
       <Input onChange={evt => setTime02(evt.target.value)} value={time02} />
       <Input onChange={evt => setShooter03(evt.target.value)} value={shooter03} />
       <Input onChange={evt => setTime03(evt.target.value)} value={time03} />
-      <Button onClick={() =>handleClick(2)} >2</Button>
+      <Button onClick={() =>handleClick("02")} >2</Button>
       <Input onChange={evt => setShooter04(evt.target.value)} value={shooter04} />
       <Input onChange={evt => setTime04(evt.target.value)} value={time04} />
       <Input onChange={evt => setShooter05(evt.target.value)} value={shooter05} />
       <Input onChange={evt => setTime05(evt.target.value)} value={time05} />
-      <Button onClick={() =>handleClick(3)} >3</Button>
+      <Button onClick={() =>handleClick("03")} >3</Button>
       <Input onChange={evt => setShooter06(evt.target.value)} value={shooter06} />
       <Input onChange={evt => setTime06(evt.target.value)} value={time06} />
       <Input onChange={evt => setShooter07(evt.target.value)} value={shooter07} />
       <Input onChange={evt => setTime07(evt.target.value)} value={time07} />
-      <Button onClick={() =>handleClick(4)} >4</Button>
+      <Button onClick={() =>handleClick("04")} >4</Button>
       <Input onChange={evt => setShooter08(evt.target.value)} value={shooter08} />
       <Input onChange={evt => setTime08(evt.target.value)} value={time08} />
       <Input onChange={evt => setShooter09(evt.target.value)} value={shooter09} />
       <Input onChange={evt => setTime09(evt.target.value)} value={time09} />
-      <Button onClick={() =>handleClick(5)} >5</Button>
+      <Button onClick={() =>handleClick("05")} >5</Button>
       <Input onChange={evt => setShooter10(evt.target.value)} value={shooter10} />
       <Input onChange={evt => setTime10(evt.target.value)} value={time10} />
       <Input onChange={evt => setShooter11(evt.target.value)} value={shooter11} />
       <Input onChange={evt => setTime11(evt.target.value)} value={time11} />
-      <Button onClick={() =>handleClick(6)} >6</Button>
+      <Button onClick={() =>handleClick("06")} >6</Button>
       <Input onChange={evt => setShooter12(evt.target.value)} value={shooter12} />
       <Input onChange={evt => setTime12(evt.target.value)} value={time12} />
       <Input onChange={evt => setShooter13(evt.target.value)} value={shooter13} />
       <Input onChange={evt => setTime13(evt.target.value)} value={time13} />
-      <Button onClick={() =>handleClick(7)} >7</Button>
+      <Button onClick={() =>handleClick("07")} >7</Button>
       <Input onChange={evt => setShooter14(evt.target.value)} value={shooter14} />
       <Input onChange={evt => setTime14(evt.target.value)} value={time14} />
     </Container>

@@ -52,6 +52,9 @@ const StatisticsButtons = ( props ) => {
   const handleCorner = () => {
     setStats({type: 'corner', team: props.isTeamA})
   }
+  const handleOffside = () => {
+    setStats({type: 'offside', team: props.isTeamA})
+  }
   const handleFoul = () => {
     console.log(time)
     let foulsInHalf
@@ -90,6 +93,9 @@ const StatisticsButtons = ( props ) => {
   const takeAwayCorner = () => {
     setStats({type: 'cornerTakeAway', team: props.isTeamA})
   }
+  const takeAwayOffside = () => {
+    setStats({type: 'offsideTakeAway', team: props.isTeamA})
+  }
   const takeAwayFoul = () => {
     if (time.time < 2) return setStats({type: 'foulTakeAwayFirst', team: props.isTeamA})
     return setStats({type: 'foulTakeAwaySecond', team: props.isTeamA})
@@ -111,6 +117,7 @@ const StatisticsButtons = ( props ) => {
       <Button onClick={handleFoul}    onContextMenu={takeAwayFoul}    >🚑</Button>
       <Button onClick={handleYellow}  onContextMenu={takeAwayYellow}  >🟡</Button>
       <Button onClick={handleRed}     onContextMenu={takeAwayRed}     >🔴</Button>
+      <Button onClick={handleOffside} onContextMenu={takeAwayOffside} >OFF</Button>
     </Container>
   )
 }

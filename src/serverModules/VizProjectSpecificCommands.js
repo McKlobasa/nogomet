@@ -2,6 +2,27 @@ const Viz = require('./VizCoreCommands')
 
 
 class VizCommands {
+
+  static SubClockOutStart (playerString, country) {
+    return Viz.setScene(Viz.project, 'CLOCK') +
+      Viz.setTextBasic('COUNTRY_OFF', country) +
+      Viz.setTextBasic('PLAYER_OFF', playerString) +
+      Viz.animationStart('SUB_OFF_IN')
+  }
+  static SubClockOutStop () {
+    return Viz.setScene(Viz.project, 'CLOCK') +
+      Viz.animationStart('SUB_OFF_OUT')
+  }
+  static SubClockInStart (playerString, country) {
+    return Viz.setScene(Viz.project, 'CLOCK') +
+      Viz.setTextBasic('COUNTRY_ON', country) +
+      Viz.setTextBasic('PLAYER_ON', playerString) +
+      Viz.animationStart('SUB_ON_IN')
+  }
+  static SubClockInStop () {
+    return Viz.setScene(Viz.project, 'CLOCK') +
+      Viz.animationStart('SUB_ON_OUT')
+  }
   static countdown () {
     countdownIsIn = true
     return Viz.setScene(Viz.project, 'COUNTDOWN') +
@@ -32,83 +53,28 @@ class VizCommands {
     return Viz.setScene(Viz.project, 'MATCH_ID') +
       Viz.animationStart('MATCH_ID_OUT')
   }
-  static lineupA () {
-    console.log(gameData)
-    return Viz.setScene(Viz.project, 'LINEUP') +
-      Viz.animationStart('LINEUP_IN') +
-      Viz.setLogo('LOGO', gameData[0].logoA) +
-      Viz.setTextBasic('CLUB_NAME', gameData[0].teamA) +
-      Viz.setTextBasic('NAME', gameData[0].trenerImeA) +
-      Viz.setTextBasic('SURNAME', gameData[0].trenerPriimekA) +
-      Viz.setTextBasic('NUMBER_1' , lineupA[0].st) +
-      Viz.setTextBasic('PLAYER_1' , lineupA[0].priimek) +
-      Viz.setTextBasic('NUMBER_2' , lineupA[1].st) +
-      Viz.setTextBasic('PLAYER_2' , lineupA[1].priimek) +
-      Viz.setTextBasic('NUMBER_3' , lineupA[2].st) +
-      Viz.setTextBasic('PLAYER_3' , lineupA[2].priimek) +
-      Viz.setTextBasic('NUMBER_4' , lineupA[3].st) +
-      Viz.setTextBasic('PLAYER_4' , lineupA[3].priimek) +
-      Viz.setTextBasic('NUMBER_5' , lineupA[4].st) +
-      Viz.setTextBasic('PLAYER_5' , lineupA[4].priimek) +
-      Viz.setTextBasic('NUMBER_6' , lineupA[5].st) +
-      Viz.setTextBasic('PLAYER_6' , lineupA[5].priimek) +
-      Viz.setTextBasic('NUMBER_7' , lineupA[6].st) +
-      Viz.setTextBasic('PLAYER_7' , lineupA[6].priimek) +
-      Viz.setTextBasic('NUMBER_8' , lineupA[7].st) +
-      Viz.setTextBasic('PLAYER_8' , lineupA[7].priimek) +
-      Viz.setTextBasic('NUMBER_9' , lineupA[8].st) +
-      Viz.setTextBasic('PLAYER_9' , lineupA[8].priimek) +
-      Viz.setTextBasic('NUMBER_10', lineupA[9].st) +
-      Viz.setTextBasic('PLAYER_10', lineupA[9].priimek) +
-      Viz.setTextBasic('NUMBER_11', lineupA[10].st) +
-      Viz.setTextBasic('PLAYER_11', lineupA[10].priimek) +
-      Viz.setTextBasic('NUMBER_12', lineupA[11].st) +
-      Viz.setTextBasic('PLAYER_12', lineupA[11].priimek) +
-      Viz.setTextBasic('NUMBER_13', lineupA[12].st) +
-      Viz.setTextBasic('PLAYER_13', lineupA[12].priimek) +
-      Viz.setTextBasic('NUMBER_14', lineupA[13].st) +
-      Viz.setTextBasic('PLAYER_14', lineupA[13].priimek)
+  static lineup (players, team, variation) {   // team: "HOME" || "AWAY"    variation: eg. "451"
+    const ensureLeadingZero = number => `${Math.floor(number / 10)}${number % 10}`
+
+    const getPlayersSetString = (player, iter) =>
+      Viz.setTextBasic(`NUMBER_${ensureLeadingZero(iter)}`, player.st) +
+      Viz.setTextBasic(`SURNAME_${ensureLeadingZero(iter)}`, player.priimek) +
+      Viz.setTextBasic(`NAME_${ensureLeadingZero(iter)}`, player.name) +
+      Viz.setTextBasic(`NUMBER_${ensureLeadingZero(player.tactical)}_T`, player.st) +
+      Viz.setTextBasic(`SURNAME_${ensureLeadingZero(player.tactical)}_T`, player.priimek)
+
+    let outputString = ''
+
+    players.forEach((player, iter) => outputString += getPlayersSetString(player, iter))
+
+    outputString += Viz.setScene(Viz.project, `${team}_LINEUP_${variation}`) + Viz.animationStart(`${team}_LINEUP_IN`)
+    console.log(outputString)
+    return outputString
   }
-  static lineup_OUT () {
-    return Viz.animationStart('LINEUP_OUT')
+  static lineup_OUT (team) {
+    return Viz.animationStart(`${team}_LINEUP_OUT`)
   }
-  static lineupB () {
-    console.log(gameData)
-    return Viz.setScene(Viz.project, 'LINEUP') +
-      Viz.animationStart('LINEUP_IN') +
-      Viz.setLogo('LOGO', gameData[0].logoB) +
-      Viz.setTextBasic('CLUB_NAME', gameData[0].teamB) +
-      Viz.setTextBasic('NAME', gameData[0].trenerImeB) +
-      Viz.setTextBasic('SURNAME', gameData[0].trenerPriimekB) +
-      Viz.setTextBasic('NUMBER_1' , lineupB[0].st) +
-      Viz.setTextBasic('PLAYER_1' , lineupB[0].priimek) +
-      Viz.setTextBasic('NUMBER_2' , lineupB[1].st) +
-      Viz.setTextBasic('PLAYER_2' , lineupB[1].priimek) +
-      Viz.setTextBasic('NUMBER_3' , lineupB[2].st) +
-      Viz.setTextBasic('PLAYER_3' , lineupB[2].priimek) +
-      Viz.setTextBasic('NUMBER_4' , lineupB[3].st) +
-      Viz.setTextBasic('PLAYER_4' , lineupB[3].priimek) +
-      Viz.setTextBasic('NUMBER_5' , lineupB[4].st) +
-      Viz.setTextBasic('PLAYER_5' , lineupB[4].priimek) +
-      Viz.setTextBasic('NUMBER_6' , lineupB[5].st) +
-      Viz.setTextBasic('PLAYER_6' , lineupB[5].priimek) +
-      Viz.setTextBasic('NUMBER_7' , lineupB[6].st) +
-      Viz.setTextBasic('PLAYER_7' , lineupB[6].priimek) +
-      Viz.setTextBasic('NUMBER_8' , lineupB[7].st) +
-      Viz.setTextBasic('PLAYER_8' , lineupB[7].priimek) +
-      Viz.setTextBasic('NUMBER_9' , lineupB[8].st) +
-      Viz.setTextBasic('PLAYER_9' , lineupB[8].priimek) +
-      Viz.setTextBasic('NUMBER_10', lineupB[9].st) +
-      Viz.setTextBasic('PLAYER_10', lineupB[9].priimek) +
-      Viz.setTextBasic('NUMBER_11', lineupB[10].st) +
-      Viz.setTextBasic('PLAYER_11', lineupB[10].priimek) +
-      Viz.setTextBasic('NUMBER_12', lineupB[11].st) +
-      Viz.setTextBasic('PLAYER_12', lineupB[11].priimek) +
-      Viz.setTextBasic('NUMBER_13', lineupB[12].st) +
-      Viz.setTextBasic('PLAYER_13', lineupB[12].priimek) +
-      Viz.setTextBasic('NUMBER_14', lineupB[13].st) +
-      Viz.setTextBasic('PLAYER_14', lineupB[13].priimek)
-  }
+
   static updateScoreClock () {
     return Viz.setScene(Viz.project, 'CLOCK') +
       Viz.setTextBasic('SCORE', `${score[0]}-${score[1]}`)
@@ -240,44 +206,39 @@ class VizCommands {
     let awayFouls = foulStackB_IN.slice(0, Number(foulsIn[1]) > 6 ? 6 : Number(foulsIn[1]) + correction[1]).reduce((a, b) => a + b, 0)
     return Viz.setScene(Viz.project, 'CLOCK') + Viz.animationStart('BALL_POSSESION_OUT') + homeFouls + awayFouls
   }
-  static statistics (data) {
+  static redsIn (reds) {
+    return Viz.setScene(Viz.project, 'CLOCK') + Viz.animationStart('BALL_POSSESION_OUT') + homeFouls + awayFouls
+  }
+  static redsOut (reds) {
+    return Viz.setScene(Viz.project, 'CLOCK') + Viz.animationStart('BALL_POSSESION_OUT') + homeFouls + awayFouls
+  }
+  static statistics (data, time) {
+    console.log(data)
     return Viz.setScene(Viz.project, 'STATISTIC') +
-
-      Viz.setTextBasic('TEAM_1', gameData[0].teamA) +
-      Viz.setTextBasic('TEAM_2', gameData[0].teamB) +
-
-      Viz.setLogo('LOGO_1', gameData[0].logoA) +
-      Viz.setLogo('LOGO_1', gameData[0].logoB) +
-
-      Viz.setTextBasic('TIME', data.time) +
-
-      Viz.setTextBasic('SCORE', `${data.goals[0]} - ${data.goals[1]}`) +
-
-      Viz.setTextBasic('S_1_1', data.shots[0]) +
-      Viz.setTextBasic('S_1_4', data.shots[1]) +
-
-      Viz.setTextBasic('S_1_2', data.attempts[0]) +
-      Viz.setTextBasic('S_1_5', data.attempts[1]) +
-
-      Viz.setTextBasic('S_1_3', data.corners[0]) +
-      Viz.setTextBasic('S_1_6', data.corners[1]) +
-
-      Viz.setTextBasic('H_1_1', data.fouls[0][0]) +
-      Viz.setTextBasic('H_2_1', data.fouls[0][1]) +
-      Viz.setTextBasic('H_1_4', data.fouls[1][0]) +
-      Viz.setTextBasic('H_2_4', data.fouls[1][1]) +
-
-      Viz.setTextBasic('H_1_2', data.yellows[0][0]) +
-      Viz.setTextBasic('H_2_2', data.yellows[0][1]) +
-      Viz.setTextBasic('H_1_5', data.yellows[1][0]) +
-      Viz.setTextBasic('H_2_5', data.yellows[1][1]) +
-
-      Viz.setTextBasic('H_1_3', data.reds[0][0]) +
-      Viz.setTextBasic('H_2_3', data.reds[0][1]) +
-      Viz.setTextBasic('H_1_6', data.reds[1][0]) +
-      Viz.setTextBasic('H_2_6', data.reds[1][1]) +
-
-      Viz.animationStart('STATISTIC_IN')
+      Viz.animationStart('STATISTIC_IN') +
+      Viz.setTextBasic('H_01', `${data.ballPoss[0]}%`) +
+      Viz.setTextBasic('A_01', `${data.ballPoss[1]}%`) +
+      Viz.setTextBasic('H_02', `${data.shots[0]}`) +
+      Viz.setTextBasic('A_02', `${data.shots[1]}`) +
+      Viz.setTextBasic('H_03', `${data.attempts[0]}`) +
+      Viz.setTextBasic('A_03', `${data.attempts[1]}`) +
+      Viz.setTextBasic('H_04', `${data.corners[0]}`) +
+      Viz.setTextBasic('A_04', `${data.corners[1]}`) +
+      Viz.setTextBasic('H_05', `${data.offsides[0]}`) +
+      Viz.setTextBasic('A_05', `${data.offsides[1]}`) +
+      Viz.setTextBasic('H_06', `${data.passed[0]}`) +
+      Viz.setTextBasic('A_06', `${data.passed[1]}`) +
+      Viz.setTextBasic('H_07', `(${data.completed[0]})`) +
+      Viz.setTextBasic('A_07', `(${data.completed[1]})`) +
+      Viz.setTextBasic('H_08', `${data.fouls[0][0] + data.fouls[0][1]}`) +
+      Viz.setTextBasic('A_08', `${data.fouls[1][0] + data.fouls[1][1]}`) +
+      Viz.setTextBasic('H_09', `${data.yellows[0][0] + data.yellows[0][1]}`) +
+      Viz.setTextBasic('A_09', `${data.yellows[1][0] + data.yellows[1][1]}`) +
+      Viz.setTextBasic('H_10', `${data.reds[0][0] + data.reds[0][1]}`) +
+      Viz.setTextBasic('A_10', `${data.reds[1][0] + data.reds[1][1]}`) +
+      Viz.setTextBasic('TIME', `${time}`) +
+      Viz.setTextBasic('SCORE_01', `${data.goals[0]}`) +
+      Viz.setTextBasic('SCORE_02', `${data.goals[1]}`)
   }
   static statistics_OUT (data) {
     return Viz.setScene(Viz.project, 'STATISTIC') +
@@ -318,17 +279,13 @@ class VizCommands {
       Viz.setTextBasic(`TIME_${side}_${order}`, data.times[i])
     }
     return Viz.setScene(Viz.project, data.scene) +
-      Viz.setLogo('LOGO_1', gameData[0].logoA) +
-      Viz.setLogo('LOGO_2', gameData[0].logoB) +
-      Viz.setTextBasic('TEAM_1', gameData[0].teamA) +
-      Viz.setTextBasic('TEAM_2', gameData[0].teamB) +
       Viz.setTextBasic('SCORE', data.score) +
       Viz.setTextBasic('PERIOD', data.period) +
       dataString +
-      Viz.animationStart(data.scene + '_IN')
+      Viz.animationStart('MATCH_SCORE_IN')
   }
   static matchScore_OUT (data) {
-    return Viz.animationStart(data.scene + '_OUT')
+    return Viz.animationStart('MATCH_SCORE_OUT')
   }
   static updateTimeMatchScore () {
     return Viz.setTextBasic('CLOCK', clock[0])

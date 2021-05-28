@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { HalftimeContext } from '../context/HalftimeContext'
 import Button from './mini_components/Button'
@@ -36,10 +36,19 @@ const getString = (time) => {
   }
 }
 
+
 const Halftime = props => {
+  const [hack, setHack] = useState(true)
   const [halftime, dispatch] = useContext(HalftimeContext)
-  const next = () => dispatch({type: 'next'})
-  const prev = () => dispatch({type: 'prev'})
+  useEffect(() => fetch(`http://localhost:4545/halftime/${halftime.time}`), [halftime])
+  const next = () => {
+    dispatch({type: 'next'})
+    setHack(true)
+  }
+  const prev = () => {
+    dispatch({type: 'prev'})
+    setHack(true)
+  }
   return (
     <Container>
       <Button onClick={prev}>{'<'}</Button>

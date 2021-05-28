@@ -2,6 +2,7 @@ import { UpdaterSignal } from 'electron-updater'
 import React, { useContext, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { PlayerContext, PlayerContextProvider } from '../context/PlayerContext'
+import postData from './postData'
 
 
 const Container = styled.div`
@@ -50,6 +51,14 @@ const Position = styled.input `
 const PlayersGrid = ( props ) => {
   const [players, dispatch] = useContext(PlayerContext)
   const [tactical, setTactical] = useState([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0])
+
+  const sendToServerLineupWithTactical = () => {
+    postData( props.isTeamA ? 'tacticalA' : 'tacticalB' , tactical.map((position, iter) => {
+      return { ...players[props.isTeamA ? 0 : 1][iter], tactical: position}
+    }))
+  }
+
+  useEffect( sendToServerLineupWithTactical, [tactical, players])
 
 
 

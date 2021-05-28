@@ -5,6 +5,7 @@ const StatisticsContext = createContext()
 const statisticsInit = {
   goals: [0,0],
   corners: [0,0],
+  offsides: [0,0],
   shots: [0,0],
   attempts: [0,0],
   fouls: [[0,0], [0,0]],
@@ -53,6 +54,8 @@ function reducer(state, action) {
       return {...state, attempts: IncrementStat(state.attempts, action.team)};
     case 'corner':
       return {...state, corners: IncrementStat(state.corners, action.team)};
+    case 'offside':
+      return {...state, offsides: IncrementStat(state.offsides, action.team)};
     case 'foulFirst':
       return {...state, fouls: IncrementFoulFirstHalf(state.fouls, action.team)};
     case 'yellowFirst':
@@ -73,6 +76,8 @@ function reducer(state, action) {
       return {...state, attempts: decrementStat(state.attempts, action.team)};
     case 'cornerTakeAway':
       return {...state, corners: decrementStat(state.corners, action.team)};
+    case 'offsideTakeAway':
+      return {...state, offsides: decrementStat(state.offsides, action.team)};
     case 'foulTakeAwayFirst':
       return {...state, fouls: DecrementFoulFirstHalf(state.fouls, action.team)};
     case 'yellowTakeAwayFirst':
