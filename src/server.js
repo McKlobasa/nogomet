@@ -12,7 +12,7 @@ const port = 4545
 app.use(bodyParser.json())
 
 const VIZ_port = 6100
-const VIZ_ip = 'viz01'
+const VIZ_ip = 'viz03'
 const client = new net.Socket()
 client.connect(VIZ_port, VIZ_ip, () => console.log(`connected to ${VIZ_ip}:${VIZ_port}`))
 
@@ -137,6 +137,11 @@ app.get('/GFX_game_id', (req, res) => {
   playSingleGraphic(Commands.matchId())
   exitCommand = Commands.matchId_OUT()
 })
+app.get('/matchscore00', (req, res) => {
+  res.send('game_id')
+  playSingleGraphic(Commands.matchscore00(stats.goals, halftime < 2 ? "HALF-TIME" : "FULL TIME"))
+  exitCommand = Commands.matchscore00Out()
+})
 app.get('/GFX_commentator', (req, res) => {
   res.send('GFX_lineup')
   playSingleGraphic(Commands.commentator())
@@ -170,6 +175,20 @@ app.get('/GFX_lineupB/:variation', (req, res) => {
   playSingleGraphic(Commands.lineup(playersInGame, "AWAY", req.params.variation))
   exitCommand = Commands.lineup_OUT("AWAY")
 })
+app.get('/GFX_subs', (req, res) => {
+  res.send('GFX_lineup')
+  let teamA = []
+  tactical[0].forEach(player => {
+    if (player.tactical == 0) teamA.push(player)
+  })
+  let teamB = []
+  tactical[1].forEach(player => {
+    if (player.tactical == 0) teamB.push(player)
+  })
+  playSingleGraphic(Commands.substitutes([teamA, teamB]))
+  exitCommand = Commands.substitutes_OUT("AWAY")
+})
+
 app.get('/GFX_clock_IN', (req, res) => {
   res.send('clock_IN')
   playSingleGraphic(Commands.clock())

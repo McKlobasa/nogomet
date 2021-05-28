@@ -23,6 +23,17 @@ class VizCommands {
     return Viz.setScene(Viz.project, 'CLOCK') +
       Viz.animationStart('SUB_ON_OUT')
   }
+  static matchscore00 (goals, halftimeString) {
+    return Viz.setScene(Viz.project, 'MATCH_SCORE_00') +
+      Viz.animationStart('MATCH_SCORE_IN') +
+      Viz.setTextBasic('TXT', halftimeString) +
+      Viz.setTextBasic('SCORE_1', goals[0]) +
+      Viz.setTextBasic('SCORE_2', goals[1])
+  }
+  static matchscore00Out () {
+    return Viz.setScene(Viz.project, 'MATCH_SCORE_00') +
+      Viz.animationStart('MATCH_SCORE_OUT')
+  }
   static countdown () {
     countdownIsIn = true
     return Viz.setScene(Viz.project, 'COUNTDOWN') +
@@ -57,22 +68,42 @@ class VizCommands {
     const ensureLeadingZero = number => `${Math.floor(number / 10)}${number % 10}`
 
     const getPlayersSetString = (player, iter) =>
-      Viz.setTextBasic(`NUMBER_${ensureLeadingZero(iter)}`, player.st) +
-      Viz.setTextBasic(`SURNAME_${ensureLeadingZero(iter)}`, player.priimek) +
-      Viz.setTextBasic(`NAME_${ensureLeadingZero(iter)}`, player.name) +
+      Viz.setTextBasic(`NUMBER_${ensureLeadingZero(iter+1)}`, player.st) +
+      Viz.setTextBasic(`SURNAME_${ensureLeadingZero(iter+1)}`, player.priimek) +
+      Viz.setTextBasic(`NAME_${ensureLeadingZero(iter+1)}`, player.name) +
       Viz.setTextBasic(`NUMBER_${ensureLeadingZero(player.tactical)}_T`, player.st) +
       Viz.setTextBasic(`SURNAME_${ensureLeadingZero(player.tactical)}_T`, player.priimek)
 
-    let outputString = ''
+    let outputString = Viz.setScene(Viz.project, `${team}_LINEUP_${variation}`) + Viz.animationStart(`${team}_LINEUP_IN`)
 
     players.forEach((player, iter) => outputString += getPlayersSetString(player, iter))
 
-    outputString += Viz.setScene(Viz.project, `${team}_LINEUP_${variation}`) + Viz.animationStart(`${team}_LINEUP_IN`)
     console.log(outputString)
     return outputString
   }
   static lineup_OUT (team) {
     return Viz.animationStart(`${team}_LINEUP_OUT`)
+  }
+  static substitutes (players) {
+    const ensureLeadingZero = number => `${Math.floor(number / 10)}${number % 10}`
+
+    const getPlayersSetStringA = (player, iter) =>
+      Viz.setTextBasic(`HN_${ensureLeadingZero(iter+1)}`, `${player.st}`) +
+      Viz.setTextBasic(`HS_${ensureLeadingZero(iter+1)}`, `${player.priimek}`)
+    const getPlayersSetStringB = (player, iter) =>
+      Viz.setTextBasic(`AN_${ensureLeadingZero(iter+1)}`, `${player.st}`) +
+      Viz.setTextBasic(`AS_${ensureLeadingZero(iter+1)}`, `${player.priimek}`)
+
+    let outputString = Viz.setScene(Viz.project, `DOUBLE_SUBSTITUTES`) + Viz.animationStart(`DOUBLE_SUBSTITUTES_IN`)
+
+    players[0].forEach((player, iter) => outputString += getPlayersSetStringA(player, iter))
+    players[1].forEach((player, iter) => outputString += getPlayersSetStringB(player, iter))
+
+
+    return outputString
+  }
+  static substitutes_OUT (team) {
+    return Viz.animationStart(`DOUBLE_SUBSTITUTES_OUT`)
   }
 
   static updateScoreClock () {

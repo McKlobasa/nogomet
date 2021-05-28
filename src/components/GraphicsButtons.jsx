@@ -42,6 +42,8 @@ const GraphicsButtons = props => {
       <Button onClick={() => fetch('http://localhost:4545/GFX_nextMatch')}>NEXT MATCH</Button>
       <Button onClick={() => fetch('http://localhost:4545/GFX_multi_flash')}>MULTI FLASH</Button>
       <Button onClick={() => fetch('http://localhost:4545/resetFouls')}>RESET FOULS</Button>
+      <Button onClick={() => fetch('http://localhost:4545/GFX_subs')}>SUBS</Button>
+      <Button onClick={() => fetch('http://localhost:4545/matchscore00')}>MATCH SCORE 00</Button>
 
       <Button onClick={playStatistics}>statistics</Button>
       <Button onClick={() => fetch('http://localhost:4545/GFX_player')}>player</Button>
