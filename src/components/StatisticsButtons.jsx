@@ -63,9 +63,6 @@ const StatisticsButtons = ( props ) => {
     } else {
       foulsInHalf = [stats.fouls[0][time.time < 2 ? 0 : 1], stats.fouls[1][time.time < 2 ? 0 : 1] + 1]
     }
-    props.handleGoal(['foulA', 'foulB'])
-    console.log(foulsInHalf)
-    fetch(`http://localhost:4545/foulsInHalf/${foulsInHalf[0]}/${foulsInHalf[1]}`)
 
     if (time.time < 2) return setStats({type: 'foulFirst', team: props.isTeamA})
     return setStats({type: 'foulSecond', team: props.isTeamA})

@@ -34,12 +34,19 @@ const GraphicsButtons = props => {
   }
   return (
     <Container>
-      <Button onClick={() => fetch('http://localhost:4545/GFX_game_id')}>GAME ID</Button>
-      <Button onClick={() => fetch('http://localhost:4545/GFX_commentator')}>KOMENTATOR</Button>
-      <Button onClick={() => fetch('http://localhost:4545/GFX_officials')}>OFFICIALS</Button>
       <Button onClick={() => fetch('http://localhost:4545/GFX_subs')}>SUBS</Button>
       <Button onClick={() => fetch('http://localhost:4545/matchscore00')}>MATCH SCORE 00</Button>
+      <Button onClick={() => fetch('http://localhost:4545/GFX_endToEnd')}>END TO END</Button>
+      <Button onClick={() => fetch('http://localhost:4545/GFX_preMulti')}>PRE MULTI</Button>
+      <Button onClick={() => fetch('http://localhost:4545/GFX_game_id')}>GAME ID</Button>
+      <Button onClick={() => fetch('http://localhost:4545/GFX_weather')}>WEATHER</Button>
+      <Button onClick={() => fetch('http://localhost:4545/GFX_referees')}>REFEREES</Button>
       <br />
+      <Button onClick={() => fetch('http://localhost:4545/delayed_match/delayed')}>cont delay</Button>
+      <Button onClick={() => fetch('http://localhost:4545/delayed_match/suspended')}>cont suspended</Button>
+      <Button onClick={() => fetch('http://localhost:4545/delayed_match/abandoned')}>cont abandoned</Button>
+      <Button onClick={() => fetch('http://localhost:4545/delayed_match/postponed')}>cont postponed</Button>
+      <Button onClick={() => fetch('http://localhost:4545/delayed_match/weather')}>cont weather</Button>
       <br />
       <Button onClick={playStatistics}>statistics</Button>
       <Button onClick={() => fetch('http://localhost:4545/GFX_playerSig/goals')}>player goals</Button>
@@ -47,9 +54,13 @@ const GraphicsButtons = props => {
       <Button onClick={() => fetch('http://localhost:4545/GFX_playerSig/attempts')}>player attempts</Button>
       <Button onClick={() => fetch('http://localhost:4545/GFX_playerSig/fouls')}>player fouls</Button>
       <Button onClick={() => fetch('http://localhost:4545/GFX_playerSig/nameOnly')}>player ID</Button>
+      <Button onClick={() => fetch('http://localhost:4545/GFX_playerSig/goalScorer')}>goal scorer</Button>
+      <Button onClick={() => fetch('http://localhost:4545/GFX_playerSig/ownGoal')}>own goal</Button>
       <Button onClick={() => fetch('http://localhost:4545/GFX_yellow')}>rumen</Button>
       <Button onClick={() => fetch('http://localhost:4545/GFX_double_yellow')}>double rumen</Button>
       <Button onClick={() => fetch('http://localhost:4545/GFX_red')}>rdec</Button>
+      <Button onClick={() => fetch('http://localhost:4545/GFX_offsides')}>offsides</Button>
+      <Button onClick={() => fetch('http://localhost:4545/GFX_ballPoss')}>ball Poss</Button>
     </Container>
   )
 }

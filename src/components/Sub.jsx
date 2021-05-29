@@ -11,7 +11,8 @@ const Container = styled.div`
   color: black;
   padding: 10px;
   height: 150px;
-  width: 200px;;
+  width: 200px;
+  margin: 3px;
 `
 const Button = styled.button`
   background: green;
@@ -59,9 +60,9 @@ const Sub = props => {
       <InputOut  value={goesOut} onChange={ evt => setGoesOut(evt.target.value) } />
       <InputIn  value={goesIn} onChange={ evt => setGoesIn(evt.target.value) } />
       <Country onClick={ () => {
-        setCountry(country == "MALTA"
-          ? "N. IRELAND"
-          : "MALTA"
+        setCountry(country != "MALTA"
+          ? "MALTA"
+          : "N. IRELAND"
         )}}>{country}</Country>
       <Button onClick={() => {
         postData("subClockInStart", {player: goesIn, country})
@@ -71,8 +72,9 @@ const Sub = props => {
         postData("subClockOutStart", {player: goesOut, country})
       }} >ven START</Button>
       <Button onClick={() => fetch("http://localhost:4545/subClockOutStop")}>ven STOP</Button>
-      <Button>A</Button>
-      <Button>A</Button>
+      <Button  onClick={() => {
+        postData("subHalftime", {inPlayer: goesIn, outPlayer: goesOut, country})
+      }}>HALFTIME SUB</Button>
 
     </Container>
   )

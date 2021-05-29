@@ -17,6 +17,7 @@ const client = new net.Socket()
 client.connect(VIZ_port, VIZ_ip, () => console.log(`connected to ${VIZ_ip}:${VIZ_port}`))
 
 
+let time
 let lineupA = []
 let lineupB = []
 let gameData = [{
@@ -125,22 +126,40 @@ app.get('/halftime/:time', (req, res) => {
 app.get('/GFX_out', (req, res) => {
   res.send('GFX_lineup')
   playSingleGraphic(exitCommand)
-  matchscoreIsIn = false
   countdownIsIn = false
 })
 
 app.get('/GFX_countdown_IN', (req, res) => {
   res.send('game_id')
+  countdownIsIn = true
   playSingleGraphic(Commands.countdown_IN())
   exitCommand = Commands.countdown_OUT()
 })
-app.get('/GFX_game_id', (req, res) => {
-  res.send('game_id')
-  playSingleGraphic(Commands.matchId())
-  exitCommand = Commands.matchId_OUT()
-})
 app.get('/matchscore00', (req, res) => {
   res.send('game_id')
+
+  let gameTimeString = ''
+  if (halftime > 1) {
+    gameTimeString = `${ensureLeadingZero(Number(time.gameTime.min) + 45)}:${ensureLeadingZero(time.gameTime.sec)}`
+  } else {
+    gameTimeString = `${ensureLeadingZero(time.gameTime.min)}:${ensureLeadingZero(time.gameTime.sec)}`
+  }
+  let timeString
+  switch (halftime) {
+    case 0: matchscoreIsIn = true
+      timeString = gameTimeString
+      break
+    case 1: matchscoreIsIn = false
+      timeString = 'HALF-TIME'
+      break
+    case 2: matchscoreIsIn = true
+      timeString = gameTimeString
+      break
+    default: matchscoreIsIn = false
+      timeString = 'FULL TIME'
+      break
+  }
+
   playSingleGraphic(Commands.matchscore00(stats.goals, halftime < 2 ? "HALF-TIME" : "FULL TIME"))
   exitCommand = Commands.matchscore00Out()
 })
@@ -172,6 +191,14 @@ app.get('/GFX_playerSig/:variation', (req, res) => {
       upperString = `${currentPlayer.number} ${currentPlayer.surname}  (${currentPlayer.isTeamA == 0 ? 'MLT' : 'NIR'})`
       lowerString = `${currentPlayer.fouls} FOULS SUFFERED`
       break
+    case 'goalScorer':
+      upperString = `${currentPlayer.number} ${currentPlayer.surname}  (${currentPlayer.isTeamA == 0 ? 'MLT' : 'NIR'})`
+      lowerString = `GOALSCORER`
+      break
+    case 'ownGoal':
+      upperString = `${currentPlayer.number} ${currentPlayer.surname}  (${currentPlayer.isTeamA == 0 ? 'MLT' : 'NIR'})`
+      lowerString = 'OWN GOAL'
+      break
     case 'nameOnly':
       upperString = `${currentPlayer.number} ${currentPlayer.surname}`
       lowerString = ` ${currentPlayer.isTeamA == 0 ? 'MALTA' : 'N. IRELAND'}`
@@ -180,7 +207,7 @@ app.get('/GFX_playerSig/:variation', (req, res) => {
 
 
   playSingleGraphic(Commands.playerSigWithStat(upperString, lowerString))
-  exitCommand = Commands.commentator_OUT()
+  exitCommand = Commands.playerSigWithStat_OUT()
 })
 app.get('/GFX_officials', (req, res) => {
   res.send('GFX_lineup')
@@ -256,12 +283,7 @@ app.get('/GFX_extra_OUT', (req, res) => {
 app.get('/GFX_coach/:team', (req, res) => {
   res.send('coach_IN')
   playSingleGraphic(Commands.coach(req.params.team))
-  exitCommand = Commands.coach_OUT()
-})
-app.get('/foulsInHalf/:a/:b', (req, res) => {
-  res.send('coach_IN')
-  const foulsInHalf = [req.params.a, req.params.b]
-  playSingleGraphic(Commands.foulsClock(foulsInHalf))
+  exitCommand = Commands.coach_OUT(req.params.team)
 })
 
 
@@ -280,6 +302,11 @@ app.get('/subClockInStop', (req, res) => {
   res.send('podpis')
   playSingleGraphic(Commands.SubClockInStop())
 })
+app.post('/subHalftime', (req, res) => {
+  res.send('podpis')
+  playSingleGraphic(Commands.subHalftime(req.body.inPlayer, req.body.outPlayer, req.body.country))
+  exitCommand = Commands.subHalftime_OUT(req.body.country)
+})
 app.post('/subClockOutStart', (req, res) => {
   res.send('podpis')
   playSingleGraphic(Commands.SubClockOutStart(req.body.player, req.body.country))
@@ -288,6 +315,37 @@ app.get('/subClockOutStop', (req, res) => {
   res.send('podpis')
   playSingleGraphic(Commands.SubClockOutStop())
 })
+
+
+
+// samo I/O grafike
+
+app.get('/GFX_endToEnd', (req, res) => {
+  res.send('end to end')
+  playSingleGraphic(Commands.endToEnd_IN())
+  exitCommand = Commands.endToEnd_OUT()
+})
+app.get('/GFX_preMulti', (req, res) => {
+  res.send('pre multi')
+  playSingleGraphic(Commands.preMulti_IN())
+  exitCommand = Commands.preMulti_OUT()
+})
+app.get('/GFX_game_id', (req, res) => {
+  res.send('game_id')
+  playSingleGraphic(Commands.matchId())
+  exitCommand = Commands.matchId_OUT()
+})
+app.get('/GFX_weather', (req, res) => {
+  res.send('weather')
+  playSingleGraphic(Commands.weather_IN())
+  exitCommand = Commands.weather_OUT()
+})
+app.get('/GFX_referees', (req, res) => {
+  res.send('referees')
+  playSingleGraphic(Commands.referees_IN())
+  exitCommand = Commands.referees_OUT()
+})
+
 
 
 
@@ -322,16 +380,20 @@ app.get('/GFX_red', (req, res) => {
   playSingleGraphic(Commands.red(currentPlayer))
   exitCommand = Commands.red_OUT()
 })
+app.get('/GFX_offsides', (req, res) => {
+  res.send('clock_IN')
+  playSingleGraphic(Commands.offsides(stats.offsides))
+  exitCommand = Commands.teamStatOut()
+})
+app.get('/GFX_ballPoss', (req, res) => {
+  res.send('clock_IN')
+  playSingleGraphic(Commands.ballPoss(stats.ballPoss))
+  exitCommand = Commands.teamStatOut()
+})
 app.post('/statistics', (req, res) => {
   res.send('statistics')
-  playSingleGraphic(Commands.statistics(stats, halftime < 2 ? "HALF-TIME" : "FUL TIME"))
+  playSingleGraphic(Commands.statistics(stats, halftime < 2 ? "HALF-TIME" : "FULL TIME"))
   exitCommand = Commands.statistics_OUT()
-})
-app.post('/GFX_matchScore', (req, res) => {
-  res.send('GFX_matchScore')
-  const data = req.body
-  playSingleGraphic(Commands.matchScore(data))
-  exitCommand = Commands.matchScore_OUT(data)
 })
 app.post('/GFX_big_shootout', (req, res) => {
   res.send('shootout')
@@ -382,6 +444,27 @@ app.get('/GFX_multi_flash', (req, res) => {
   playSingleGraphic(Commands.multiFlash())
   exitCommand = Commands.multiFlash_OUT()
 })
+app.get('/delayed_match/:variation', (req, res) => {
+  res.send('next match')
+  let message = ''
+  switch(req.params.variation) {
+    case 'delayed': message = 'MATCH DELAYED'
+      break;
+    case 'suspended': message = 'MATCH SUSPENDED'
+      break;
+    case 'abandoned': message = 'MATCH ABANDONED'
+      break;
+    case 'postponed': message = 'MATCH POSTPONED'
+      break;
+    case 'weather': message = 'MATCH ABANDONED DUW TO ADVERSE WEATHER CONDITIONS'
+      break;
+    default: message = 'MATCH ABANDONED DUE TO ADVERSE WEATHER CONDITIONS'
+      break;
+  }
+  playSingleGraphic(Commands.cont(message))
+  exitCommand = Commands.cont_OUT()
+
+})
 
 
 app.post('/stats', (req, res) => {
@@ -431,12 +514,11 @@ app.post('/gameData', (req, res) => {
    .then(data => gameData = data)
 })
 
-
 app.post('/clock', (req, res) => {
   res.send('got timestring')
   time = req.body
   let gameTimeString = ''
-  if (halftime > 2) {
+  if (halftime > 1) {
     gameTimeString = `${ensureLeadingZero(Number(time.gameTime.min) + 45)}:${ensureLeadingZero(time.gameTime.sec)}`
   } else {
     gameTimeString = `${ensureLeadingZero(time.gameTime.min)}:${ensureLeadingZero(time.gameTime.sec)}`
@@ -444,11 +526,16 @@ app.post('/clock', (req, res) => {
   const extraTimeString = `${time.extraTime.min}:${ensureLeadingZero(time.extraTime.sec)}`
 
   if (clockIsIn) playSingleGraphic(Commands.updateTime(gameTimeString, extraTimeString, time.extraMins))
+  if (matchscoreIsIn) playSingleGraphic(Commands.updateMatchscoreTime(gameTimeString))
 })
 
+
+
 app.post('/countdown', (req, res) => {
+  res.send('countdown updated')
   time = req.body
-  const countdownString = `${ensureLeadingZero(Number(time.countdown.min))}:${ensureLeadingZero(time.countdown.sec)}`
+  console.log(req.body)
+  const countdownString = `00:${ensureLeadingZero(Number(time.countdown.min))}:${ensureLeadingZero(time.countdown.sec)}`
   if (countdownIsIn) playSingleGraphic(Commands.updateCountdown(countdownString))
 })
 

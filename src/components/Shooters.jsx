@@ -12,7 +12,7 @@ const Input = styled.input`
 
 const Container = styled.div`
   display: grid;
-  grid-template-columns: 3fr 2fr 1fr 3fr 2fr;
+  grid-template-columns: 3fr 1fr 3fr;
   grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
   border-radius: 15px;
   overflow: hidden;
@@ -64,21 +64,6 @@ const Shooters = props => {
   const [shooter13, setShooter13] = useState('')
   const [shooter14, setShooter14] = useState('')
 
-  const [time01, setTime01] = useState('')
-  const [time02, setTime02] = useState('')
-  const [time03, setTime03] = useState('')
-  const [time04, setTime04] = useState('')
-  const [time05, setTime05] = useState('')
-  const [time06, setTime06] = useState('')
-  const [time07, setTime07] = useState('')
-  const [time08, setTime08] = useState('')
-  const [time09, setTime09] = useState('')
-  const [time10, setTime10] = useState('')
-  const [time11, setTime11] = useState('')
-  const [time12, setTime12] = useState('')
-  const [time13, setTime13] = useState('')
-  const [time14, setTime14] = useState('')
-
   const [time, setTime] = useContext(HalftimeContext)
   const [stats, setStats] = useContext(StatisticsContext)
 
@@ -93,16 +78,9 @@ const Shooters = props => {
         break
       case 1: period='HALF-TIME'
         break
-      case 2: period='HALF-TIME'
+      case 2: period='FULL TIME'
         break
-      case 3: period='HALF-TIME'
-        break
-      case 4: period='HALF-TIME'
-        break
-      case 5: period='FULL-TIME'
-        break
-      case 6: period='END OF 2nd HALF'
-        break
+      default: period='FULL TIME'
     }
 
     const scene = `MATCH_SCORE_${size}`
@@ -112,78 +90,48 @@ const Shooters = props => {
       size,
       scene,
       period,
-      score: `${stats.goals[0]}-${stats.goals[1]}`,
+      score: [stats.goals[0], stats.goals[1]],
       shooters: [
         shooter01,
-        shooter02,
         shooter03,
-        shooter04,
         shooter05,
-        shooter06,
         shooter07,
-        shooter08,
         shooter09,
-        shooter10,
         shooter11,
-        shooter12,
         shooter13,
-        shooter14,
+        shooter02,
+        shooter04,
+        shooter06,
+        shooter08,
+        shooter10,
+        shooter12,
+        shooter14
       ],
-      times: [
-        time01,
-        time02,
-        time03,
-        time04,
-        time05,
-        time06,
-        time07,
-        time08,
-        time09,
-        time10,
-        time11,
-        time12,
-        time13,
-        time14
-      ]
   })
   }
   return (
     <Container>
       <Input onChange={evt => setShooter01(evt.target.value)} value={shooter01} />
-      <Input onChange={evt => setTime01(evt.target.value)} value={time01} />
       <Button onClick={() =>handleClick("01")} >1</Button>
       <Input onChange={evt => setShooter02(evt.target.value)} value={shooter02} />
-      <Input onChange={evt => setTime02(evt.target.value)} value={time02} />
       <Input onChange={evt => setShooter03(evt.target.value)} value={shooter03} />
-      <Input onChange={evt => setTime03(evt.target.value)} value={time03} />
       <Button onClick={() =>handleClick("02")} >2</Button>
       <Input onChange={evt => setShooter04(evt.target.value)} value={shooter04} />
-      <Input onChange={evt => setTime04(evt.target.value)} value={time04} />
       <Input onChange={evt => setShooter05(evt.target.value)} value={shooter05} />
-      <Input onChange={evt => setTime05(evt.target.value)} value={time05} />
       <Button onClick={() =>handleClick("03")} >3</Button>
       <Input onChange={evt => setShooter06(evt.target.value)} value={shooter06} />
-      <Input onChange={evt => setTime06(evt.target.value)} value={time06} />
       <Input onChange={evt => setShooter07(evt.target.value)} value={shooter07} />
-      <Input onChange={evt => setTime07(evt.target.value)} value={time07} />
       <Button onClick={() =>handleClick("04")} >4</Button>
       <Input onChange={evt => setShooter08(evt.target.value)} value={shooter08} />
-      <Input onChange={evt => setTime08(evt.target.value)} value={time08} />
       <Input onChange={evt => setShooter09(evt.target.value)} value={shooter09} />
-      <Input onChange={evt => setTime09(evt.target.value)} value={time09} />
       <Button onClick={() =>handleClick("05")} >5</Button>
       <Input onChange={evt => setShooter10(evt.target.value)} value={shooter10} />
-      <Input onChange={evt => setTime10(evt.target.value)} value={time10} />
       <Input onChange={evt => setShooter11(evt.target.value)} value={shooter11} />
-      <Input onChange={evt => setTime11(evt.target.value)} value={time11} />
       <Button onClick={() =>handleClick("06")} >6</Button>
       <Input onChange={evt => setShooter12(evt.target.value)} value={shooter12} />
-      <Input onChange={evt => setTime12(evt.target.value)} value={time12} />
       <Input onChange={evt => setShooter13(evt.target.value)} value={shooter13} />
-      <Input onChange={evt => setTime13(evt.target.value)} value={time13} />
       <Button onClick={() =>handleClick("07")} >7</Button>
       <Input onChange={evt => setShooter14(evt.target.value)} value={shooter14} />
-      <Input onChange={evt => setTime14(evt.target.value)} value={time14} />
     </Container>
   )
 }

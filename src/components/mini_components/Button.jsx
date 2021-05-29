@@ -4,11 +4,11 @@ const Button = styled.button`
   background: white;
   border: none;
 
-  height: 20px;
+  height: 18px;
 
   margin: 3px;
 
-  font-size: 16px;
+  font-size: 14px;
   border-radius: 5px;
 `
 

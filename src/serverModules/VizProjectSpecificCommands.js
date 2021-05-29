@@ -24,11 +24,16 @@ class VizCommands {
       Viz.animationStart('SUB_ON_OUT')
   }
   static matchscore00 (goals, halftimeString) {
+    matchscoreIsIn = true
+    setTimeout(() => matchscoreIsIn = false, 20000)
     return Viz.setScene(Viz.project, 'MATCH_SCORE_00') +
       Viz.animationStart('MATCH_SCORE_IN') +
       Viz.setTextBasic('TXT', halftimeString) +
       Viz.setTextBasic('SCORE_1', goals[0]) +
       Viz.setTextBasic('SCORE_2', goals[1])
+  }
+  static updateMatchscoreTime (time) {
+    return Viz.setTextBasic('TXT', time)
   }
   static matchscore00Out () {
     return Viz.setScene(Viz.project, 'MATCH_SCORE_00') +
@@ -36,17 +41,20 @@ class VizCommands {
   }
   static matchId () {
     return Viz.setScene(Viz.project, 'MATCH_ID') +
-      Viz.animationStart('MATCH_ID_IN') +
-      Viz.setLogo('LOGO_1', gameData[0].logoA) +
-      Viz.setLogo('LOGO_2', gameData[0].logoB) +
-      Viz.setTextBasic('TEAM_1', gameData[0].teamA) +
-      Viz.setTextBasic('TEAM_2', gameData[0].teamB) +
-      Viz.setTextBasic('DATE', gameData[0].datum) +
-      Viz.setTextBasic('TIME', gameData[0].kraj)
+      Viz.animationStart('MATCH_ID_IN')
   }
   static matchId_OUT () {
     return Viz.setScene(Viz.project, 'MATCH_ID') +
       Viz.animationStart('MATCH_ID_OUT')
+  }
+  static cont (message) {
+    return Viz.setScene(Viz.project, 'CONTINGENCY') +
+      Viz.animationStart('CONTINGENCY_IN') +
+      Viz.setTextBasic('MESSAGE', message)
+  }
+  static cont_OUT () {
+    return Viz.setScene(Viz.project, 'CONTINGENCY') +
+      Viz.animationStart('CONTINGENCY_OUT')
   }
   static lineup (players, team, variation) {   // team: "HOME" || "AWAY"    variation: eg. "451"
     const ensureLeadingZero = number => `${Math.floor(number / 10)}${number % 10}`
@@ -95,24 +103,12 @@ class VizCommands {
       Viz.setTextBasic('SCORE', `${score[0]}-${score[1]}`)
   }
   static coach (team) {
-    const name = team == 0 ? gameData[0].trenerImeA : gameData[0].trenerImeB
-    const surname = team == 0 ? gameData[0].trenerPriimekA : gameData[0].trenerPriimekB
-    const logo = team == 0 ? gameData[0].logoA : gameData[0].logoB
-    return Viz.setScene(Viz.project, 'CLOCK') +
-      Viz.setTextBasic('NAME_COACH', name) +
-      Viz.setTextBasic('SURNAME_COACH', surname) +
-      foulStackA_OUT[Number(foulsIn[0]) < 6 ?  Number(foulsIn[0]) : 5] +
-      foulStackB_OUT[Number(foulsIn[1]) < 6 ?  Number(foulsIn[1]) : 5] +
-      Viz.setLogo('LOGO_1_COACH', logo) +
-      Viz.animationStart('COACH_ID_IN')
+    const coachString = team == 0 ? Viz.animationStart('COACH_ID_IN') : Viz.animationStart('COACH_ID_AWAY_IN')
+    return Viz.setScene(Viz.project, 'CLOCK') + coachString
   }
-  static coach_OUT (name, surname) {
-    const correction = [foulsIn[0] > 0 ? 1 : 0, foulsIn[1] > 0 ? 1 : 0]
-    let homeFouls = foulStackA_IN.slice(0, Number(foulsIn[0]) > 6 ? 6 : Number(foulsIn[0]) + correction[0]).reduce((a, b) => a + b, 0)
-    let awayFouls = foulStackB_IN.slice(0, Number(foulsIn[1]) > 6 ? 6 : Number(foulsIn[1]) + correction[1]).reduce((a, b) => a + b, 0)
-
-    return Viz.setScene(Viz.project, 'CLOCK') +
-      Viz.animationStart('COACH_ID_OUT') + homeFouls + awayFouls
+  static coach_OUT (team) {
+    const coachString = team == 0 ? Viz.animationStart('COACH_ID_OUT') : Viz.animationStart('COACH_ID_AWAY_OUT')
+    return Viz.setScene(Viz.project, 'CLOCK') + coachString
   }
 
   static clock (time) {
@@ -135,6 +131,47 @@ class VizCommands {
   static extra_OUT () {
     return Viz.animationStart('DODATEK_OUT')
   }
+  static endToEnd_IN () {
+    return Viz.setScene(Viz.project, 'end_to_end') + Viz.animationStart('END_TO_END_IN')
+  }
+  static endToEnd_OUT () {
+    return Viz.setScene(Viz.project, 'end_to_end') + Viz.animationStart('END_TO_END_OUT')
+  }
+  static preMulti_IN () {
+    return Viz.setScene(Viz.project, 'PREMULTI_INULATERAL') + Viz.animationStart('PREMULTI_UNILATERAL_IN')
+  }
+  static preMulti_OUT () {
+    return Viz.setScene(Viz.project, 'PREMULTI_INULATERAL') + Viz.animationStart('PREMULTI_UNILATERAL_OUT')
+  }
+  static weather_IN () {
+    return Viz.setScene(Viz.project, 'WEATHER') + Viz.animationStart('WEATHER_IN')
+  }
+  static weather_OUT () {
+    return Viz.setScene(Viz.project, 'WEATHER') + Viz.animationStart('WEATHER_OUT')
+  }
+  static referees_IN () {
+    return Viz.setScene(Viz.project, 'REFEREES') + Viz.animationStart('REFEREES_IN')
+  }
+  static referees_OUT () {
+    return Viz.setScene(Viz.project, 'REFEREES') + Viz.animationStart('REFEREES_OUT')
+  }
+
+
+
+
+
+  static subHalftime (on, off, country) {
+    return Viz.setScene(Viz.project, country == 'MALTA' ?  'HALFTIME_SUB' : 'HALFTIME_SUB_AWAY') + Viz.animationStart('COUNTDOWN_IN') +
+      Viz.setTextBasic('NAME_ON', on[1]) +
+      Viz.setTextBasic('SURNAME_ON', on[2]) +
+      Viz.setTextBasic('NUMBER_ON', on[0]) +
+      Viz.setTextBasic('NAME_OFF', off[1]) +
+      Viz.setTextBasic('SURNAME_OFF', off[2]) +
+      Viz.setTextBasic('NUMBER_OFF', off[0])
+  }
+  static subHalftime_OUT (country) {
+    return Viz.setScene(Viz.project, country == 'MALTA' ?  'HALFTIME_SUB' : 'HALFTIME_SUB_AWAY') + Viz.animationStart('COUNTDOWN_OUT')
+  }
   static updateTime (timestring, extraTimeString, extraMins) {
     return Viz.setTextBasic('CLOCK_TXT', timestring) +
       Viz.setTextBasic('CAS', extraTimeString) +
@@ -147,7 +184,7 @@ class VizCommands {
     return Viz.setScene(Viz.project, 'COUNTDOWN') + Viz.animationStart('COUNTDOWN_OUT')
   }
   static updateCountdown (timestring) {
-    return Viz.setTextBasic('CLOCK_TXT', timestring)
+    return Viz.setTextBasic('COUNT', timestring)
   }
   static setScore (score) {
     return Viz.setTextBasic('SCORE_1', `${score[0]}`) +
@@ -212,9 +249,12 @@ class VizCommands {
       Viz.setTextBasic('PLAYER_YELLOW', `${player.number} ${player.surname} (${player.isTeamA == 0 ? 'MLT' : 'NIR'})`)
   }
   static playerSigWithStat (upperString, lowerString) {
-    return Viz.animationStart('YELLOW_CARD_IN') +
-      Viz.setTextBasic('PLAYER_YELLOW', upperString) +
-      Viz.setTextBasic('PLAYER_YELLOW', lowerString)
+    return Viz.animationStart('PLAYER_ID_IN') +
+      Viz.setTextBasic('PLAYER', upperString) +
+      Viz.setTextBasic('STAT', lowerString)
+  }
+  static playerSigWithStat_OUT (upperString, lowerString) {
+    return Viz.animationStart('PLAYER_ID_OUT')
   }
   static yellow_OUT () {
     return Viz.animationStart('YELLOW_CARD_OUT')
@@ -322,19 +362,36 @@ class VizCommands {
   static officials_OUT () {
     return Viz.setScene(Viz.project, 'MATCH_OFFICIALS') + Viz.animationStart('MATCH_OFFICIALS_OUT')
   }
+  static ballPoss (stat) {
+    return Viz.setScene(Viz.project, 'CLOCK') + Viz.animationStart('TEAM_STATS_IN') +
+      Viz.setTextBasic('INFO', 'BALL POSSESION') +
+      Viz.setTextBasic('STAT_TEAM_1', stat[0]) +
+      Viz.setTextBasic('STAT_TEAM_2', stat[1])
+  }
+  static offsides (stat) {
+    return Viz.setScene(Viz.project, 'CLOCK') + Viz.animationStart('TEAM_STATS_IN') +
+      Viz.setTextBasic('INFO', 'OFFSIDES') +
+      Viz.setTextBasic('STAT_TEAM_1', stat[0]) +
+      Viz.setTextBasic('STAT_TEAM_2', stat[1])
+  }
+  static teamStatOut (stat) {
+    return Viz.setScene(Viz.project, 'CLOCK') + Viz.animationStart('TEAM_STATS_OUT')
+  }
+
   static matchScore (data) {
     console.log(data)
     matchscoreIsIn = true
     let dataString = ''
-    for (let i = 0; i < (data.size * 2); i++) {
+    for (let i = 0; i < (data.size); i++) {
       const side = (i % 2) + 1
       const order = Math.floor(i / 2) + 1
-      dataString += Viz.setTextBasic(`STRELEC_${side}_${order}`, data.shooters[i]) +
-      Viz.setTextBasic(`TIME_${side}_${order}`, data.times[i])
+      dataString += Viz.setTextBasic(`HOMESCORER_0${i+1}`, data.shooters[i])
+      dataString += Viz.setTextBasic(`AWAYSCORER_0${i+1}`, data.shooters[7 + i])
     }
     return Viz.setScene(Viz.project, data.scene) +
-      Viz.setTextBasic('SCORE', data.score) +
-      Viz.setTextBasic('PERIOD', data.period) +
+      Viz.setTextBasic('SCORE_1', data.score[0]) +
+      Viz.setTextBasic('SCORE_2', data.score[1]) +
+      Viz.setTextBasic('TXT', data.period) +
       dataString +
       Viz.animationStart('MATCH_SCORE_IN')
   }
