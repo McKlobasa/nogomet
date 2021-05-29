@@ -34,22 +34,6 @@ class VizCommands {
     return Viz.setScene(Viz.project, 'MATCH_SCORE_00') +
       Viz.animationStart('MATCH_SCORE_OUT')
   }
-  static countdown () {
-    countdownIsIn = true
-    return Viz.setScene(Viz.project, 'COUNTDOWN') +
-      Viz.setLogo('LOGO_1', gameData[0].logoA) +
-      Viz.setLogo('LOGO_2', gameData[0].logoB) +
-      Viz.setTextBasic('TEAM_1', gameData[0].teamA) +
-      Viz.setTextBasic('TEAM_2', gameData[0].teamB) +
-      Viz.animationStart('COUNTDOWN_IN')
-  }
-  static countdown_OUT () {
-    return Viz.setScene(Viz.project, 'COUNTDOWN') +
-      Viz.animationStart('COUNTDOWN_OUT')
-  }
-  static updateCountdown () {
-    return  Viz.setTextBasic('COUNT', clock[0])
-  }
   static matchId () {
     return Viz.setScene(Viz.project, 'MATCH_ID') +
       Viz.animationStart('MATCH_ID_IN') +
@@ -132,12 +116,37 @@ class VizCommands {
   }
 
   static clock (time) {
-    return Viz.setScene(Viz.project, 'CLOCK') + Viz.animationStart('CLOCK_IN')
+    return Viz.setScene(Viz.project, 'CLOCK') + Viz.animationStart('CLOCK_IN') +
+      Viz.setTextBasic("TEAM_1", "MLT") +
+      Viz.setTextBasic("TEAM_2", "NIR")
   }
   static clock_OUT () {
     return Viz.setScene(Viz.project, 'CLOCK') + Viz.animationStart('CLOCK_OUT')
   }
-  static updateTime (timestring) {
+  static extraRunning_IN () {
+    return Viz.animationStart('ADD_TIME_IN')
+  }
+  static extraRunning_OUT () {
+    return Viz.animationStart('ADD_TIME_OUT')
+  }
+  static extra_IN () {
+    return Viz.animationStart('DODATEK_IN')
+  }
+  static extra_OUT () {
+    return Viz.animationStart('DODATEK_OUT')
+  }
+  static updateTime (timestring, extraTimeString, extraMins) {
+    return Viz.setTextBasic('CLOCK_TXT', timestring) +
+      Viz.setTextBasic('CAS', extraTimeString) +
+      Viz.setTextBasic('MINUTE', `+${extraMins}`)
+  }
+  static countdown_IN () {
+    return Viz.setScene(Viz.project, 'COUNTDOWN') + Viz.animationStart('COUNTDOWN_IN')
+  }
+  static countdown_OUT () {
+    return Viz.setScene(Viz.project, 'COUNTDOWN') + Viz.animationStart('COUNTDOWN_OUT')
+  }
+  static updateCountdown (timestring) {
     return Viz.setTextBasic('CLOCK_TXT', timestring)
   }
   static setScore (score) {
@@ -202,6 +211,11 @@ class VizCommands {
     return Viz.animationStart('YELLOW_CARD_IN') +
       Viz.setTextBasic('PLAYER_YELLOW', `${player.number} ${player.surname} (${player.isTeamA == 0 ? 'MLT' : 'NIR'})`)
   }
+  static playerSigWithStat (upperString, lowerString) {
+    return Viz.animationStart('YELLOW_CARD_IN') +
+      Viz.setTextBasic('PLAYER_YELLOW', upperString) +
+      Viz.setTextBasic('PLAYER_YELLOW', lowerString)
+  }
   static yellow_OUT () {
     return Viz.animationStart('YELLOW_CARD_OUT')
   }
@@ -238,10 +252,26 @@ class VizCommands {
     return Viz.setScene(Viz.project, 'CLOCK') + Viz.animationStart('BALL_POSSESION_OUT') + homeFouls + awayFouls
   }
   static redsIn (reds) {
-    return Viz.setScene(Viz.project, 'CLOCK') + Viz.animationStart('BALL_POSSESION_OUT') + homeFouls + awayFouls
+    let animString = ''
+    if (reds[0] > 0) animString += Viz.animationStart('CRVENI_01_IN')
+    if (reds[0] > 1) animString += Viz.animationStart('CRVENI_02_IN')
+    if (reds[0] > 2) animString += Viz.animationStart('CRVENI_03_IN')
+    if (reds[1] > 0) animString += Viz.animationStart('CRVENI_04_IN')
+    if (reds[1] > 1) animString += Viz.animationStart('CRVENI_05_IN')
+    if (reds[1] > 2) animString += Viz.animationStart('CRVENI_06_IN')
+
+    return Viz.setScene(Viz.project, 'CLOCK') + animString
   }
   static redsOut (reds) {
-    return Viz.setScene(Viz.project, 'CLOCK') + Viz.animationStart('BALL_POSSESION_OUT') + homeFouls + awayFouls
+    let animString = ''
+    if (reds[0] > 0) animString += Viz.animationStart('CRVENI_01_OUT')
+    if (reds[0] > 1) animString += Viz.animationStart('CRVENI_02_OUT')
+    if (reds[0] > 2) animString += Viz.animationStart('CRVENI_03_OUT')
+    if (reds[1] > 0) animString += Viz.animationStart('CRVENI_04_OUT')
+    if (reds[1] > 1) animString += Viz.animationStart('CRVENI_05_OUT')
+    if (reds[1] > 2) animString += Viz.animationStart('CRVENI_06_OUT')
+
+    return Viz.setScene(Viz.project, 'CLOCK') + animString
   }
   static statistics (data, time) {
     console.log(data)
@@ -291,13 +321,6 @@ class VizCommands {
   }
   static officials_OUT () {
     return Viz.setScene(Viz.project, 'MATCH_OFFICIALS') + Viz.animationStart('MATCH_OFFICIALS_OUT')
-  }
-  static timeout (logo) {
-    return Viz.setScene(Viz.project, 'TIMEOUT') + Viz.animationStart('TIMEOUT_IN') +
-      Viz.setLogo('LOGO', logo)
-  }
-  static timeout_OUT (logo) {
-    return Viz.setScene(Viz.project, 'TIMEOUT') + Viz.animationStart('TIMEOUT_OUT')
   }
   static matchScore (data) {
     console.log(data)

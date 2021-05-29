@@ -4,7 +4,7 @@ const Button = styled.button`
   background: white;
   border: none;
 
-  height: 30px;
+  height: 20px;
 
   margin: 3px;
 

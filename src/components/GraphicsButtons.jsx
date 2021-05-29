@@ -34,25 +34,22 @@ const GraphicsButtons = props => {
   }
   return (
     <Container>
-      <Button onClick={() => fetch('http://localhost:4545/GFX_countdown')}>COUNTDOWN</Button>
       <Button onClick={() => fetch('http://localhost:4545/GFX_game_id')}>GAME ID</Button>
       <Button onClick={() => fetch('http://localhost:4545/GFX_commentator')}>KOMENTATOR</Button>
       <Button onClick={() => fetch('http://localhost:4545/GFX_officials')}>OFFICIALS</Button>
-      <Button onClick={() => fetch('http://localhost:4545/GFX_schedule')}>SCHEDULE</Button>
-      <Button onClick={() => fetch('http://localhost:4545/GFX_nextMatch')}>NEXT MATCH</Button>
-      <Button onClick={() => fetch('http://localhost:4545/GFX_multi_flash')}>MULTI FLASH</Button>
-      <Button onClick={() => fetch('http://localhost:4545/resetFouls')}>RESET FOULS</Button>
       <Button onClick={() => fetch('http://localhost:4545/GFX_subs')}>SUBS</Button>
       <Button onClick={() => fetch('http://localhost:4545/matchscore00')}>MATCH SCORE 00</Button>
-
+      <br />
+      <br />
       <Button onClick={playStatistics}>statistics</Button>
-      <Button onClick={() => fetch('http://localhost:4545/GFX_player')}>player</Button>
-      <Button onClick={() => fetch('http://localhost:4545/GFX_player_info')}>player INFO</Button>
+      <Button onClick={() => fetch('http://localhost:4545/GFX_playerSig/goals')}>player goals</Button>
+      <Button onClick={() => fetch('http://localhost:4545/GFX_playerSig/shots')}>player shots</Button>
+      <Button onClick={() => fetch('http://localhost:4545/GFX_playerSig/attempts')}>player attempts</Button>
+      <Button onClick={() => fetch('http://localhost:4545/GFX_playerSig/fouls')}>player fouls</Button>
+      <Button onClick={() => fetch('http://localhost:4545/GFX_playerSig/nameOnly')}>player ID</Button>
       <Button onClick={() => fetch('http://localhost:4545/GFX_yellow')}>rumen</Button>
       <Button onClick={() => fetch('http://localhost:4545/GFX_double_yellow')}>double rumen</Button>
       <Button onClick={() => fetch('http://localhost:4545/GFX_red')}>rdec</Button>
-      <Button onClick={() => fetch('http://localhost:4545/')}>match score</Button>
-      <Button onClick={() => fetch('http://localhost:4545/')}>penalty shootout</Button>
     </Container>
   )
 }

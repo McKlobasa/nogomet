@@ -12,7 +12,7 @@ const port = 4545
 app.use(bodyParser.json())
 
 const VIZ_port = 6100
-const VIZ_ip = 'viz03'
+const VIZ_ip = 'viz01'
 const client = new net.Socket()
 client.connect(VIZ_port, VIZ_ip, () => console.log(`connected to ${VIZ_ip}:${VIZ_port}`))
 
@@ -81,6 +81,8 @@ let players = {
   away: []
 }
 
+const ensureLeadingZero = number => `${Math.floor(number / 10)}${number % 10}`
+
 const playGraphics = (graphics, delays) => {
   graphics.map((gfx, i) => {
     setTimeout( () => {
@@ -91,8 +93,8 @@ const playGraphics = (graphics, delays) => {
 }
 
 const playSingleGraphic = (gfx) => {
-  client.write(gfx)
   console.log(gfx)
+  client.write(gfx)
 }
 
 
@@ -127,9 +129,9 @@ app.get('/GFX_out', (req, res) => {
   countdownIsIn = false
 })
 
-app.get('/GFX_countdown', (req, res) => {
+app.get('/GFX_countdown_IN', (req, res) => {
   res.send('game_id')
-  playSingleGraphic(Commands.countdown())
+  playSingleGraphic(Commands.countdown_IN())
   exitCommand = Commands.countdown_OUT()
 })
 app.get('/GFX_game_id', (req, res) => {
@@ -145,6 +147,39 @@ app.get('/matchscore00', (req, res) => {
 app.get('/GFX_commentator', (req, res) => {
   res.send('GFX_lineup')
   playSingleGraphic(Commands.commentator())
+  exitCommand = Commands.commentator_OUT()
+})
+app.get('/GFX_playerSig/:variation', (req, res) => {
+  res.send('GFX_playerSig')
+  console.log(currentPlayer)
+  let upperString = ''
+  let lowerString = ''
+
+  switch(req.params.variation) {
+    case 'goals':
+      upperString = `${currentPlayer.number} ${currentPlayer.surname}  (${currentPlayer.isTeamA == 0 ? 'MLT' : 'NIR'})`
+      lowerString = `${currentPlayer.goals} GOALS IN THIS MATCH`
+      break
+    case 'shots':
+      upperString = `${currentPlayer.number} ${currentPlayer.surname}  (${currentPlayer.isTeamA == 0 ? 'MLT' : 'NIR'})`
+      lowerString = `${currentPlayer.shots} ATTEMPTS ON TARGET`
+      break
+    case 'attempts':
+      upperString = `${currentPlayer.number} ${currentPlayer.surname}  (${currentPlayer.isTeamA == 0 ? 'MLT' : 'NIR'})`
+      lowerString = `${currentPlayer.attempts} TOTAL ATTEMPTS`
+      break
+    case 'fouls':
+      upperString = `${currentPlayer.number} ${currentPlayer.surname}  (${currentPlayer.isTeamA == 0 ? 'MLT' : 'NIR'})`
+      lowerString = `${currentPlayer.fouls} FOULS SUFFERED`
+      break
+    case 'nameOnly':
+      upperString = `${currentPlayer.number} ${currentPlayer.surname}`
+      lowerString = ` ${currentPlayer.isTeamA == 0 ? 'MALTA' : 'N. IRELAND'}`
+      break
+  }
+
+
+  playSingleGraphic(Commands.playerSigWithStat(upperString, lowerString))
   exitCommand = Commands.commentator_OUT()
 })
 app.get('/GFX_officials', (req, res) => {
@@ -192,16 +227,31 @@ app.get('/GFX_subs', (req, res) => {
 app.get('/GFX_clock_IN', (req, res) => {
   res.send('clock_IN')
   playSingleGraphic(Commands.clock())
-  playSingleGraphic(Commands.redsIn(stats.reds))
+  playSingleGraphic(Commands.redsIn([stats.reds[0][0] + stats.reds[0][1], stats.reds[1][0] + stats.reds[1][1]]))
   playSingleGraphic(Commands.setScore(score))
-  playSingleGraphic(Commands.updateTime(clock))
   clockIsIn = true
 })
 app.get('/GFX_clock_OUT', (req, res) => {
   res.send('clock_OUT')
   playSingleGraphic(Commands.clock_OUT())
-  playSingleGraphic(Commands.redsOut(stats.reds))
+  playSingleGraphic(Commands.redsOut([stats.reds[0][0] + stats.reds[0][1], stats.reds[1][0] + stats.reds[1][1]]))
   clockIsIn = false
+})
+app.get('/GFX_extraRunning', (req, res) => {
+  res.send('game_id')
+  playSingleGraphic(Commands.extraRunning_IN())
+})
+app.get('/GFX_extraRunning_OUT', (req, res) => {
+  res.send('game_id')
+  playSingleGraphic(Commands.extraRunning_OUT())
+})
+app.get('/GFX_extra', (req, res) => {
+  res.send('game_id')
+  playSingleGraphic(Commands.extra_IN())
+})
+app.get('/GFX_extra_OUT', (req, res) => {
+  res.send('game_id')
+  playSingleGraphic(Commands.extra_OUT())
 })
 app.get('/GFX_coach/:team', (req, res) => {
   res.send('coach_IN')
@@ -338,6 +388,7 @@ app.post('/stats', (req, res) => {
   res.send('you sent stats')
   console.log(req.body)
   stats = req.body
+  if (clockIsIn) playSingleGraphic(Commands.redsIn([stats.reds[0][0] + stats.reds[0][1], stats.reds[1][0] + stats.reds[1][1]]))
 })
 app.post('/tacticalA', (req, res) => {
   res.send('got tactical A')
@@ -379,14 +430,26 @@ app.post('/gameData', (req, res) => {
    readCsv(req.body.path)
    .then(data => gameData = data)
 })
+
+
 app.post('/clock', (req, res) => {
-  res.send('lineup a')
-  clockPath = req.body.path
-})
-app.get('/clock/:timestring', (req, res) => {
   res.send('got timestring')
-  clock = req.params.timestring
-  playSingleGraphic(Commands.updateTime(clock))
+  time = req.body
+  let gameTimeString = ''
+  if (halftime > 2) {
+    gameTimeString = `${ensureLeadingZero(Number(time.gameTime.min) + 45)}:${ensureLeadingZero(time.gameTime.sec)}`
+  } else {
+    gameTimeString = `${ensureLeadingZero(time.gameTime.min)}:${ensureLeadingZero(time.gameTime.sec)}`
+  }
+  const extraTimeString = `${time.extraTime.min}:${ensureLeadingZero(time.extraTime.sec)}`
+
+  if (clockIsIn) playSingleGraphic(Commands.updateTime(gameTimeString, extraTimeString, time.extraMins))
+})
+
+app.post('/countdown', (req, res) => {
+  time = req.body
+  const countdownString = `${ensureLeadingZero(Number(time.countdown.min))}:${ensureLeadingZero(time.countdown.sec)}`
+  if (countdownIsIn) playSingleGraphic(Commands.updateCountdown(countdownString))
 })
 
 app.listen(port, () => {

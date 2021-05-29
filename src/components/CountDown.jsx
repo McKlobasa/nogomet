@@ -2,22 +2,24 @@ import React, { useContext, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { HalftimeContext } from '../context/HalftimeContext'
 import useInterval from '../hooks/useInterval'
+import postData from './postData'
 
 const Container = styled.div`
-  display: grid;
+  display: flex;
   box-sizing: border-box;
-  grid-template-columns: 2fr 1fr 2fr 1fr;
-  grid-template-rows: 1fr 1fr 1fr;
   background: white;
   border-radius: 10px;
   color: black;
   padding: 10px;
-  height: 100px;
-  width: 200px;;
+  height: 150px;
+  width: 150px;
+  flex-wrap: wrap;
+  margin-left: 15px;
 `
 const Button = styled.button`
-  background: #ff7e94;
+  background: green;
   color: white;
+  height: 20px;
   border: none;
   border-radius: 3px;
   margin: 2px;
@@ -38,7 +40,8 @@ const decrementTime = time => {
 
 const Clock = props => {
   const [clockIsRunning, setClockIsRunning] = useState(false)
-  const [gameTime, setGameTime] = useState({min: 59, sec: 0})
+  const [gameTime, setGameTime] = useState({min: 10, sec: 0})
+
 
   const handleTick = () => {
     if ( !clockIsRunning ) return
@@ -47,7 +50,9 @@ const Clock = props => {
 
   const ensureLeadingZero = number => `${Math.floor(number / 10)}${number % 10}`
 
-  useEffect(() => fetch(`http://localhost:4545/clock/${ensureLeadingZero(gameTime.min)}:${ensureLeadingZero(gameTime.sec)}`) , [gameTime])
+  useEffect(() => postData('countdown', {
+    countdown: gameTime,
+  }), [gameTime])
 
   useInterval(() => {
     handleTick()
@@ -56,20 +61,29 @@ const Clock = props => {
 
   return (
     <Container>
-      <p>{`${gameTime.min} : ${gameTime.sec}`}</p>
-      <button onClick={() =>  clockIsRunning ? setClockIsRunning(false) : setClockIsRunning(true)
-      }>{clockIsRunning ? 'stop' : 'start'}</button>
-      <button onClick={() => setGameTime(incrementTime(gameTime)) }>+</button>
-      <button onClick={() => setGameTime(decrementTime(gameTime)) }>-</button>
-      <button onClick={() => {
-        setGameTime({min: 0, sec: 0})
-      }}>set 0:0</button>
-      <button onClick={() => {
+      <p style={{margin: 3, width: 110}}>{`${gameTime.min} : ${gameTime.sec}`}</p>
+      <Button onClick={() =>  clockIsRunning ? setClockIsRunning(false) : setClockIsRunning(true)
+      }>{clockIsRunning ? 'stop' : 'start'}</Button>
+      <Button onClick={() => setGameTime(incrementTime(gameTime)) }>+</Button>
+      <Button onClick={() => setGameTime(decrementTime(gameTime)) }>-</Button>
+      <Button onClick={() => {
+        fetch('http://localhost:4545/GFX_countdown_IN')
+        postData('countdown', {
+          countdown: gameTime,
+        })
+      }}>IN</Button>
+      <Button onClick={() => {
         setGameTime({min: 10, sec: 0})
-      }}>set 10:0</button>
-      <button onClick={() => {
+      }}>10 min</Button>
+      <Button onClick={() => {
+        setGameTime({min: 5, sec: 0})
+      }}>5 min</Button>
+      <Button onClick={() => {
         setGameTime({min: 1, sec: 0})
-      }}>set 1:0</button>
+      }}>1 min</Button>
+      <Button onClick={() => {
+        setGameTime({min: 0, sec: 10})
+      }}>10 sec</Button>
     </Container>
   )
 }
