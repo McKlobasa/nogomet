@@ -140,9 +140,9 @@ app.get('/matchscore00', (req, res) => {
 
   let gameTimeString = ''
   if (halftime > 1) {
-    gameTimeString = `${ensureLeadingZero(Number(time.gameTime.min) + 45)}:${ensureLeadingZero(time.gameTime.sec)}`
+    gameTimeString = `${time.gameTime.min + 45}:${ensureLeadingZero(time.gameTime.sec)}`
   } else {
-    gameTimeString = `${ensureLeadingZero(time.gameTime.min)}:${ensureLeadingZero(time.gameTime.sec)}`
+    gameTimeString = `${time.gameTime.min}:${ensureLeadingZero(time.gameTime.sec)}`
   }
   let timeString
   switch (halftime) {
@@ -160,7 +160,7 @@ app.get('/matchscore00', (req, res) => {
       break
   }
 
-  playSingleGraphic(Commands.matchscore00(stats.goals, halftime < 2 ? "HALF-TIME" : "FULL TIME"))
+  playSingleGraphic(Commands.matchscore00(stats.goals, timeString))
   exitCommand = Commands.matchscore00Out()
 })
 app.get('/GFX_commentator', (req, res) => {
@@ -260,7 +260,6 @@ app.get('/GFX_clock_IN', (req, res) => {
 app.get('/GFX_clock_OUT', (req, res) => {
   res.send('clock_OUT')
   playSingleGraphic(Commands.clock_OUT())
-  playSingleGraphic(Commands.redsOut([stats.reds[0][0] + stats.reds[0][1], stats.reds[1][0] + stats.reds[1][1]]))
   clockIsIn = false
 })
 app.get('/GFX_extraRunning', (req, res) => {
@@ -509,12 +508,12 @@ app.get('/lineupB', (req, res) => {
 app.get('/GFX_reds/:number', (req, res) => {
   res.send('reds')
   console.log(`red ${req.params.number} IN`)
-  Commands.redsIn(Number(req.params.number))
+  playSingleGraphic(Commands.redsIn(Number(req.params.number)))
 })
 app.get('/GFX_reds_OUT/:number', (req, res) => {
   res.send('reds out')
   console.log(`red ${req.params.number} OUT`)
-  Commands.redsOut(Number(req.params.number))
+  playSingleGraphic(Commands.redsOut(Number(req.params.number)))
 })
 app.post('/gameData', (req, res) => {
   res.send('game data')
@@ -527,9 +526,9 @@ app.post('/clock', (req, res) => {
   time = req.body
   let gameTimeString = ''
   if (halftime > 1) {
-    gameTimeString = `${ensureLeadingZero(Number(time.gameTime.min) + 45)}:${ensureLeadingZero(time.gameTime.sec)}`
+    gameTimeString = `${time.gameTime.min + 45}:${ensureLeadingZero(time.gameTime.sec)}`
   } else {
-    gameTimeString = `${ensureLeadingZero(time.gameTime.min)}:${ensureLeadingZero(time.gameTime.sec)}`
+    gameTimeString = `${time.gameTime.min}:${ensureLeadingZero(time.gameTime.sec)}`
   }
   const extraTimeString = `${time.extraTime.min}:${ensureLeadingZero(time.extraTime.sec)}`
 

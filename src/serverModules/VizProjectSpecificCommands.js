@@ -292,6 +292,7 @@ class VizCommands {
     return Viz.setScene(Viz.project, 'CLOCK') + Viz.animationStart('BALL_POSSESION_OUT') + homeFouls + awayFouls
   }
   static redsIn (number) {
+    console.log('tole se zgodi')
     return Viz.setScene(Viz.project, 'CLOCK') + Viz.animationStart(`CRVENI_0${number}_IN`)
   }
   static redsOut (number) {
@@ -348,13 +349,15 @@ class VizCommands {
   }
   static ballPoss (stat) {
     return Viz.setScene(Viz.project, 'CLOCK') + Viz.animationStart('TEAM_STATS_IN') +
-      Viz.setTextBasic('INFO', 'BALL POSSESION') +
+      Viz.setTextBasic('INFO', 'BALL POSSESSION') +
+      Viz.setTextBasic('STAT_TEAM_3', '%') +
       Viz.setTextBasic('STAT_TEAM_1', stat[0]) +
       Viz.setTextBasic('STAT_TEAM_2', stat[1])
   }
   static offsides (stat) {
     return Viz.setScene(Viz.project, 'CLOCK') + Viz.animationStart('TEAM_STATS_IN') +
       Viz.setTextBasic('INFO', 'OFFSIDES') +
+      Viz.setTextBasic('STAT_TEAM_3', ' ') +
       Viz.setTextBasic('STAT_TEAM_1', stat[0]) +
       Viz.setTextBasic('STAT_TEAM_2', stat[1])
   }
