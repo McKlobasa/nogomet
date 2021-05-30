@@ -291,27 +291,11 @@ class VizCommands {
     let awayFouls = foulStackB_IN.slice(0, Number(foulsIn[1]) > 6 ? 6 : Number(foulsIn[1]) + correction[1]).reduce((a, b) => a + b, 0)
     return Viz.setScene(Viz.project, 'CLOCK') + Viz.animationStart('BALL_POSSESION_OUT') + homeFouls + awayFouls
   }
-  static redsIn (reds) {
-    let animString = ''
-    if (reds[0] > 0) animString += Viz.animationStart('CRVENI_01_IN')
-    if (reds[0] > 1) animString += Viz.animationStart('CRVENI_02_IN')
-    if (reds[0] > 2) animString += Viz.animationStart('CRVENI_03_IN')
-    if (reds[1] > 0) animString += Viz.animationStart('CRVENI_04_IN')
-    if (reds[1] > 1) animString += Viz.animationStart('CRVENI_05_IN')
-    if (reds[1] > 2) animString += Viz.animationStart('CRVENI_06_IN')
-
-    return Viz.setScene(Viz.project, 'CLOCK') + animString
+  static redsIn (number) {
+    return Viz.setScene(Viz.project, 'CLOCK') + Viz.animationStart(`CRVENI_0${number}_IN`)
   }
-  static redsOut (reds) {
-    let animString = ''
-    if (reds[0] > 0) animString += Viz.animationStart('CRVENI_01_OUT')
-    if (reds[0] > 1) animString += Viz.animationStart('CRVENI_02_OUT')
-    if (reds[0] > 2) animString += Viz.animationStart('CRVENI_03_OUT')
-    if (reds[1] > 0) animString += Viz.animationStart('CRVENI_04_OUT')
-    if (reds[1] > 1) animString += Viz.animationStart('CRVENI_05_OUT')
-    if (reds[1] > 2) animString += Viz.animationStart('CRVENI_06_OUT')
-
-    return Viz.setScene(Viz.project, 'CLOCK') + animString
+  static redsOut (number) {
+    return Viz.setScene(Viz.project, 'CLOCK') + Viz.animationStart(`CRVENI_0${number}_OUT`)
   }
   static statistics (data, time) {
     console.log(data)

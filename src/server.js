@@ -254,7 +254,6 @@ app.get('/GFX_subs', (req, res) => {
 app.get('/GFX_clock_IN', (req, res) => {
   res.send('clock_IN')
   playSingleGraphic(Commands.clock())
-  playSingleGraphic(Commands.redsIn([stats.reds[0][0] + stats.reds[0][1], stats.reds[1][0] + stats.reds[1][1]]))
   playSingleGraphic(Commands.setScore(score))
   clockIsIn = true
 })
@@ -471,7 +470,6 @@ app.post('/stats', (req, res) => {
   res.send('you sent stats')
   console.log(req.body)
   stats = req.body
-  if (clockIsIn) playSingleGraphic(Commands.redsIn([stats.reds[0][0] + stats.reds[0][1], stats.reds[1][0] + stats.reds[1][1]]))
 })
 app.post('/tacticalA', (req, res) => {
   res.send('got tactical A')
@@ -508,6 +506,16 @@ app.post('/lineupB', (req, res) => {
 app.get('/lineupB', (req, res) => {
   res.json({team: lineupB})
 })
+app.get('/GFX_reds/:number', (req, res) => {
+  res.send('reds')
+  console.log(`red ${req.params.number} IN`)
+  Commands.redsIn(Number(req.params.number))
+})
+app.get('/GFX_reds_OUT/:number', (req, res) => {
+  res.send('reds out')
+  console.log(`red ${req.params.number} OUT`)
+  Commands.redsOut(Number(req.params.number))
+})
 app.post('/gameData', (req, res) => {
   res.send('game data')
    readCsv(req.body.path)
@@ -533,7 +541,7 @@ app.post('/clock', (req, res) => {
 
 app.post('/countdown', (req, res) => {
   res.send('countdown updated')
-  time = req.body
+  let time = req.body
   console.log(req.body)
   const countdownString = `00:${ensureLeadingZero(Number(time.countdown.min))}:${ensureLeadingZero(time.countdown.sec)}`
   if (countdownIsIn) playSingleGraphic(Commands.updateCountdown(countdownString))

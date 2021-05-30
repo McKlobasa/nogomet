@@ -72,10 +72,6 @@ const Sub = props => {
         postData("subClockOutStart", {player: goesOut, country})
       }} >ven START</Button>
       <Button onClick={() => fetch("http://localhost:4545/subClockOutStop")}>ven STOP</Button>
-      <Button  onClick={() => {
-        postData("subHalftime", {inPlayer: goesIn, outPlayer: goesOut, country})
-      }}>HALFTIME SUB</Button>
-
     </Container>
   )
 }
